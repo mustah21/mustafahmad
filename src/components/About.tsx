@@ -39,8 +39,8 @@ const About = () => {
             About <span className="text-gradient">Me</span>
           </h2>
           <p className="text-muted-foreground text-center text-lg mb-16 max-w-2xl mx-auto">
-            Zealous computer engineering student with hands-on experience in full-stack development, 
-            networking, and DevOps fundamentals including CI/CD and containerized deployments.
+              Specializing in the complete software lifecycle. 
+              I design full-stack applications, architect network solutions, and automate deployments through containerization and CI/CD turning complex technical challenges into elegant, maintainable systems.
           </p>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">

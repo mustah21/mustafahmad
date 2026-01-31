@@ -69,7 +69,7 @@ const Contact = () => {
                     <h3 className="text-xl font-semibold mb-6">Social</h3>
                     <div className="flex gap-4 mb-8">
                       <a
-                        href="https://linkedin.com/in/mustafa-ahmad"
+                        href="https://www.linkedin.com/in/mustafa-ahmad-002063332/"
                         target="_blank"
                         rel="noopener noreferrer"
                         className="w-12 h-12 rounded-lg bg-secondary hover:bg-secondary/80 border border-border hover:border-primary/50 flex items-center justify-center transition-all duration-300"
@@ -77,7 +77,7 @@ const Contact = () => {
                         <Linkedin className="w-5 h-5" />
                       </a>
                       <a
-                        href="https://github.com/mustafa-ahmad"
+                        href="https://github.com/mustah21"
                         target="_blank"
                         rel="noopener noreferrer"
                         className="w-12 h-12 rounded-lg bg-secondary hover:bg-secondary/80 border border-border hover:border-primary/50 flex items-center justify-center transition-all duration-300"

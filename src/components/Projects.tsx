@@ -15,6 +15,8 @@ const projects = [
       "Scrum and agile methodologies",
       "Git-based version control with CI/CD",
     ],
+    github: "https://github.com/mustah21/bookish-checking",
+
   },
   {
     title: "Cafeteria Simulation",
@@ -28,6 +30,8 @@ const projects = [
       "Event-driven algorithms",
       "Comprehensive documentation",
     ],
+    github: "https://github.com/mustah21/Java-simulator-project",
+
   },
 ];
 
@@ -98,14 +102,26 @@ const Projects = () => {
 
                   {/* Actions */}
                   <div className="flex gap-3">
-                    <Button variant="outline" size="sm" className="flex-1">
-                      <Github className="w-4 h-4 mr-2" />
-                      Code
+                    <Button
+                      asChild
+                      variant="outline"
+                      size="sm"
+                      className="flex-1"
+                    >
+                      <a
+                        href={project.github}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        <Github className="w-4 h-4 mr-2" />
+                        Code
+                      </a>
                     </Button>
-                    <Button size="sm" className="flex-1">
+
+                    {/* <Button size="sm" className="flex-1">
                       <ExternalLink className="w-4 h-4 mr-2" />
-                      Demo
-                    </Button>
+                      Demo 
+                    </Button> */}
                   </div>
                 </div>
               </motion.div>

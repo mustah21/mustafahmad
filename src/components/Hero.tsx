@@ -57,7 +57,7 @@ const Hero = () => {
             transition={{ delay: 0.5, duration: 0.6 }}
             className="text-lg text-muted-foreground max-w-2xl mx-auto mb-10"
           >
-            Full-stack developer with expertise in React, Node.js, and DevOps. 
+            Full stack developer with expertise in React, Node.js, and DevOps. 
             Passionate about building scalable applications and crafting exceptional user experiences.
           </motion.p>
 
@@ -84,7 +84,7 @@ const Hero = () => {
             className="flex items-center justify-center gap-4"
           >
             <a
-              href="https://linkedin.com/in/mustafa-ahmad"
+              href="https://linkedin.com/in/mustafa-ahmad-002063332/"
               target="_blank"
               rel="noopener noreferrer"
               className="p-3 rounded-full bg-secondary hover:bg-secondary/80 border border-border hover:border-primary/50 transition-all duration-300"
@@ -92,7 +92,7 @@ const Hero = () => {
               <Linkedin className="w-5 h-5" />
             </a>
             <a
-              href="https://github.com/mustafa-ahmad"
+              href="https://github.com/mustah21"
               target="_blank"
               rel="noopener noreferrer"
               className="p-3 rounded-full bg-secondary hover:bg-secondary/80 border border-border hover:border-primary/50 transition-all duration-300"

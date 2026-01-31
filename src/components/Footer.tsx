@@ -6,9 +6,6 @@ const Footer = () => {
           <p className="text-sm text-muted-foreground">
             © {new Date().getFullYear()} Mustafa Ahmad. All rights reserved.
           </p>
-          <p className="text-sm text-muted-foreground">
-            Built with <span className="text-primary">♥</span> using React & Tailwind
-          </p>
         </div>
       </div>
     </footer>
