@@ -10,12 +10,12 @@ const highlights = [
   {
     icon: Server,
     title: "Backend",
-    description: "Node.js, Spring Boot, REST APIs",
+    description: "Node.js, Java, Spring Boot, REST APIs",
   },
   {
     icon: GitBranch,
     title: "DevOps",
-    description: "Docker, CI/CD, GitHub Actions",
+    description: "Docker, CI/CD, Jenkins, kubernetes",
   },
   {
     icon: Globe,

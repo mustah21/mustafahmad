@@ -15,7 +15,7 @@ const skillCategories = [
   },
   {
     title: "DevOps & Tools",
-    skills: ["Docker", "Git", "GitHub", "CI/CD", "Linux", "REST APIs", "Nginx", "Postman"],
+    skills: ["Docker", "Git", "GitHub", "CI/CD", "Linux", "REST APIs", "Nginx", "Postman", "Kubernetes"],
   },
 ];
 
