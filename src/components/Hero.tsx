@@ -57,8 +57,8 @@ const Hero = () => {
             transition={{ delay: 0.5, duration: 0.6 }}
             className="text-lg text-muted-foreground max-w-2xl mx-auto mb-10"
           >
-            Full stack developer with expertise in React, Node.js, and DevOps. 
-            Passionate about building scalable applications and crafting exceptional user experiences.
+                Full stack developer passionate about building scalable 
+                applications and crafting exceptional user experiences.          
           </motion.p>
 
           {/* CTA Buttons */}

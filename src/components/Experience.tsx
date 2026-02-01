@@ -23,6 +23,7 @@ const experiences = [
       "Gained practical experience in full development lifecycle from design to deployment",
     ],
   },
+  
 ];
 
 const Experience = () => {
