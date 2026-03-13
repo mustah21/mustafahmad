@@ -25,7 +25,7 @@ const Hero = () => {
           transition={{ duration: 0.6 }}
           className="relative flex-shrink-0"
         >
-          {/* Decorative ring — YOUR ORIGINAL */}
+
           <div className="absolute inset-0 rounded-full border-2 border-purple-500/30 scale-110" />
 
           <img
@@ -35,7 +35,6 @@ const Hero = () => {
           />
 
 
-          {/* Status badge — YOUR ORIGINAL */}
           {/* <motion.div
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
@@ -48,30 +47,25 @@ const Hero = () => {
 
         </motion.div>
 
-        {/* ── RIGHT: Text ── */}
         <motion.div
           initial={{ opacity: 0, x: 40 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.6 }}
           className="flex flex-col items-start text-left"
         >
-          {/* Name */}
           <h1 className="text-4xl md:text-6xl font-bold tracking-tight mb-2">
             Mustafa Ahmad
           </h1>
 
-          {/* Title */}
           <p className="text-xl md:text-2xl text-purple-400 font-medium mb-4">
             Software Engineer
           </p>
 
-          {/* Description */}
           <p className="text-muted-foreground text-base md:text-lg max-w-md mb-8 leading-relaxed">
             Full stack developer passionate about building scalable applications
             and crafting exceptional user experiences.
           </p>
 
-          {/* CTA Buttons */}
           <div className="flex flex-wrap gap-4 mb-8">
             <Button size="lg">
               <Mail className="mr-2 h-4 w-4" />
@@ -82,7 +76,6 @@ const Hero = () => {
             </Button>
           </div>
 
-          {/* Social Links */}
           <div className="flex items-center gap-4">
             <a href="#" className="text-muted-foreground hover:text-foreground transition-colors">
               <Github className="h-5 w-5" />
@@ -94,10 +87,11 @@ const Hero = () => {
               <Phone className="h-5 w-5" />
             </a>
           </div>
+
         </motion.div>
       </div>
 
-      {/* Scroll indicator — YOUR ORIGINAL */}
+
       <motion.div
         animate={{ y: [0, 8, 0] }}
         transition={{ repeat: Infinity, duration: 1.5 }}
@@ -107,6 +101,7 @@ const Hero = () => {
         <ArrowDown className="h-4 w-4" />
       </motion.div>
     </section>
+    
   );
 };
 
