@@ -37,8 +37,8 @@ const projects = [
     title: "Personalized Study Planner",
     subtitle: "Application for students to plan, organize and track their study activities",
     description:
-      "Application for students to plan, organize and track their study activities. Integrates gemini AI for task recommendations.",
-    icon: Coffee,
+      "Application for students to plan, organize and track their study activities.Integrates gemini API for task recommendations.",
+    icon: BookOpen,
     tech: ["Typescript", "React", "Java-spring boot", "Postgres 17"],
     highlights: [
       "UI/UX designed in Figma",

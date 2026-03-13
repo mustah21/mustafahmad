@@ -2,6 +2,9 @@ import { motion } from "framer-motion";
 import { ArrowDown, Github, Linkedin, Mail, Phone } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import profileImage from "@/assets/profile.jpg";
+import profileImage2 from "@/assets/profile2.jpeg";
+
+
 
 const Hero = () => {
   return (
@@ -26,7 +29,7 @@ const Hero = () => {
           <div className="absolute inset-0 rounded-full border-2 border-purple-500/30 scale-110" />
 
           <img
-            src={profileImage}
+            src={profileImage2}
             alt="Mustafa Ahmad"
             className="w-56 h-56 md:w-72 md:h-72 rounded-full object-cover border-4 border-purple-500/40 shadow-xl shadow-purple-500/20"
           />
