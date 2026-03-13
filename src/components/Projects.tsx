@@ -33,6 +33,21 @@ const projects = [
     github: "https://github.com/mustah21/Java-simulator-project",
 
   },
+    {
+    title: "Personalized Study Planner",
+    subtitle: "Application for students to plan, organize and track their study activities",
+    description:
+      "Application for students to plan, organize and track their study activities. Integrates gemini AI for task recommendations.",
+    icon: Coffee,
+    tech: ["Typescript", "React", "Java-spring boot", "Postgres 17"],
+    highlights: [
+      "UI/UX designed in Figma",
+      "Fronend built in React, Typescript and tailwind CSS",
+      "Backend built in java-Spring boot ",
+    ],
+    github: "https://github.com/mustah21/personalized-study-planner",
+
+  },
 ];
 
 const Projects = () => {

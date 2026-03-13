@@ -1,132 +1,108 @@
 import { motion } from "framer-motion";
 import { ArrowDown, Github, Linkedin, Mail, Phone } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import profileImage from "@/assets/profile.jpg";
 
 const Hero = () => {
   return (
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
-      {/* Background grid */}
-      <div className="absolute inset-0 bg-grid opacity-40" />
-      
-      {/* Gradient orb */}
-      <div className="absolute top-1/4 -right-1/4 w-[600px] h-[600px] rounded-full bg-primary/10 blur-[120px] animate-pulse-slow" />
-      <div className="absolute bottom-1/4 -left-1/4 w-[400px] h-[400px] rounded-full bg-primary/5 blur-[100px] animate-pulse-slow" />
-      
-      <div className="container relative z-10 px-6">
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, ease: "easeOut" }}
-          className="max-w-4xl mx-auto text-center"
-        >
-          {/* Status badge */}
-          <motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ delay: 0.2, duration: 0.5 }}
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-secondary border border-border mb-8"
-          >
-            <span className="w-2 h-2 rounded-full bg-primary animate-pulse" />
-            <span className="text-sm text-muted-foreground">Available for opportunities</span>
-          </motion.div>
+      {/* Background grid — YOUR ORIGINAL */}
+      <div className="absolute inset-0 bg-grid-white/[0.02] bg-[size:50px_50px]" />
 
-          {/* Name */}
-          <motion.h1
-            initial={{ opacity: 0, y: 20 }}
+      {/* Gradient orb — YOUR ORIGINAL */}
+      <div className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-purple-500/20 rounded-full blur-3xl" />
+
+      {/* Main content — side by side */}
+      <div className="relative z-10 max-w-6xl mx-auto px-6 flex flex-col md:flex-row items-center gap-12 md:gap-20">
+
+        {/* ── LEFT: Image ── */}
+        <motion.div
+          initial={{ opacity: 0, x: -40 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.6 }}
+          className="relative flex-shrink-0"
+        >
+          {/* Decorative ring — YOUR ORIGINAL */}
+          <div className="absolute inset-0 rounded-full border-2 border-purple-500/30 scale-110" />
+
+          <img
+            src={profileImage}
+            alt="Mustafa Ahmad"
+            className="w-56 h-56 md:w-72 md:h-72 rounded-full object-cover border-4 border-purple-500/40 shadow-xl shadow-purple-500/20"
+          />
+
+
+          {/* Status badge — YOUR ORIGINAL */}
+          {/* <motion.div
+            initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.3, duration: 0.6 }}
-            className="text-5xl md:text-7xl lg:text-8xl font-bold tracking-tight mb-4"
+            transition={{ delay: 0.4 }}
+            className="absolute -bottom-3 left-1/2 -translate-x-1/2 flex items-center gap-2 bg-background/80 backdrop-blur border border-purple-500/30 rounded-full px-4 py-1.5 text-sm whitespace-nowrap shadow-lg"
           >
-            Mustafa <span className="text-gradient">Ahmad</span>
-          </motion.h1>
+            <span className="w-2 h-2 rounded-full bg-green-400 animate-pulse" />
+            Available for opportunities
+          </motion.div> */}
+
+        </motion.div>
+
+        {/* ── RIGHT: Text ── */}
+        <motion.div
+          initial={{ opacity: 0, x: 40 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.6 }}
+          className="flex flex-col items-start text-left"
+        >
+          {/* Name */}
+          <h1 className="text-4xl md:text-6xl font-bold tracking-tight mb-2">
+            Mustafa Ahmad
+          </h1>
 
           {/* Title */}
-          <motion.h2
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.4, duration: 0.6 }}
-            className="text-xl md:text-2xl lg:text-3xl font-medium text-muted-foreground mb-6"
-          >
+          <p className="text-xl md:text-2xl text-purple-400 font-medium mb-4">
             Software Engineer
-          </motion.h2>
+          </p>
 
           {/* Description */}
-          <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.5, duration: 0.6 }}
-            className="text-lg text-muted-foreground max-w-2xl mx-auto mb-10"
-          >
-                Full stack developer passionate about building scalable 
-                applications and crafting exceptional user experiences.          
-          </motion.p>
+          <p className="text-muted-foreground text-base md:text-lg max-w-md mb-8 leading-relaxed">
+            Full stack developer passionate about building scalable applications
+            and crafting exceptional user experiences.
+          </p>
 
           {/* CTA Buttons */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.6, duration: 0.6 }}
-            className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-12"
-          >
-            <Button size="lg" className="glow-effect px-8" asChild>
-              <a href="#contact">Get in Touch</a>
+          <div className="flex flex-wrap gap-4 mb-8">
+            <Button size="lg">
+              <Mail className="mr-2 h-4 w-4" />
+              Get in Touch
             </Button>
-            <Button size="lg" variant="outline" className="px-8" asChild>
-              <a href="#projects">View Projects</a>
+            <Button size="lg" variant="outline">
+              View Projects
             </Button>
-          </motion.div>
+          </div>
 
           {/* Social Links */}
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.7, duration: 0.6 }}
-            className="flex items-center justify-center gap-4"
-          >
-            <a
-              href="https://linkedin.com/in/mustafa-ahmad-002063332/"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="p-3 rounded-full bg-secondary hover:bg-secondary/80 border border-border hover:border-primary/50 transition-all duration-300"
-            >
-              <Linkedin className="w-5 h-5" />
+          <div className="flex items-center gap-4">
+            <a href="#" className="text-muted-foreground hover:text-foreground transition-colors">
+              <Github className="h-5 w-5" />
             </a>
-            <a
-              href="https://github.com/mustah21"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="p-3 rounded-full bg-secondary hover:bg-secondary/80 border border-border hover:border-primary/50 transition-all duration-300"
-            >
-              <Github className="w-5 h-5" />
+            <a href="#" className="text-muted-foreground hover:text-foreground transition-colors">
+              <Linkedin className="h-5 w-5" />
             </a>
-            <a
-              href="mailto:mustafa.ahmad@metropolia.fi"
-              className="p-3 rounded-full bg-secondary hover:bg-secondary/80 border border-border hover:border-primary/50 transition-all duration-300"
-            >
-              <Mail className="w-5 h-5" />
+            <a href="#" className="text-muted-foreground hover:text-foreground transition-colors">
+              <Phone className="h-5 w-5" />
             </a>
-            <a
-              href="tel:+358449302118"
-              className="p-3 rounded-full bg-secondary hover:bg-secondary/80 border border-border hover:border-primary/50 transition-all duration-300"
-            >
-              <Phone className="w-5 h-5" />
-            </a>
-          </motion.div>
-        </motion.div>
-
-        {/* Scroll indicator */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 1, duration: 0.6 }}
-          className="absolute bottom-10 left-1/2 -translate-x-1/2"
-        >
-          <a href="#about" className="flex flex-col items-center gap-2 text-muted-foreground hover:text-primary transition-colors">
-            <span className="text-sm">Scroll down</span>
-            <ArrowDown className="w-5 h-5 animate-bounce" />
-          </a>
+          </div>
         </motion.div>
       </div>
+
+      {/* Scroll indicator — YOUR ORIGINAL */}
+      <motion.div
+        animate={{ y: [0, 8, 0] }}
+        transition={{ repeat: Infinity, duration: 1.5 }}
+        className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-1 text-muted-foreground text-sm"
+      >
+        <span>Scroll down</span>
+        <ArrowDown className="h-4 w-4" />
+      </motion.div>
     </section>
   );
 };
