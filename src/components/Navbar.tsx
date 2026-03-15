@@ -56,9 +56,9 @@ const Navbar = () => {
           <Button size="sm" asChild>
             <a href="#contact">Get in Touch</a>
           </Button>
-          <Button size="sm" asChild>
+          {/* <Button size="sm" asChild>
             <a href="/Mustafa_Ahmad-Resume.pdf" download>Download CV</a>
-          </Button>
+          </Button> */}
         </div>
 
         {/* Mobile menu button */}
