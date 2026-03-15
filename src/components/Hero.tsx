@@ -67,10 +67,10 @@ const Hero = () => {
           </p>
 
           <div className="flex flex-wrap gap-4 mb-8">
-            <Button size="lg">
+            {/* <Button size="lg">
               <Mail className="mr-2 h-4 w-4" />
               <a href="#contact">Get in Touch</a>
-            </Button>
+            </Button> */}
             <Button size="lg" variant="outline">
               <a href="#projects">View Projects</a>
             </Button>
