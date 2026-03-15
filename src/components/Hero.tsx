@@ -67,13 +67,12 @@ const Hero = () => {
           </p>
 
           <div className="flex flex-wrap gap-4 mb-8">
-            {/* <Button size="lg">
-              <Mail className="mr-2 h-4 w-4" />
+            <Button size="lg" >
               <a href="#contact">Get in Touch</a>
-            </Button> */}
-            <Button size="lg" variant="outline">
-              <a href="#projects">View Projects</a>
             </Button>
+            {/* <Button size="lg" variant="outline">
+              <a href="#projects">View Projects</a>
+            </Button> */}
 
             <Button size="lg" variant="outline">
               <a href="/Mustafa_Ahmad-Resume.pdf" download>Download CV</a>
