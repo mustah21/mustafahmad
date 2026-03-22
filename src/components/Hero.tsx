@@ -83,7 +83,41 @@ const Hero = () => {
 
           </div>
 
-          <div className="flex items-center gap-4">
+
+<motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.5 }}
+            className="flex items-center gap-6"
+          >
+            {[
+              { icon: Github, label: "GitHub", href: "https://github.com/mustah21/" },
+              { icon: Linkedin, label: "LinkedIn", href: "https://www.linkedin.com/in/mustafa-ahmad-002063332/" },
+              { icon: Mail, label: "Email", href: "mailto:mustafa.ahmad@metropolia.fi" },
+            ].map((social, index) => (
+              <motion.a
+                key={social.label}
+                href={social.href}
+                whileHover={{ scale: 1.2, rotate: 5 }}
+                whileTap={{ scale: 0.95 }}
+                className="relative group"
+              >
+                <div className="absolute inset-0 bg-gradient-to-r from-cyan-500 to-blue-500 rounded-lg blur opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                <div className="relative bg-background p-3 rounded-lg border border-white/10 group-hover:border-white/30 transition-all">
+                  <social.icon className="h-5 w-5 text-cyan-400 group-hover:text-cyan-300" />
+                </div>
+              </motion.a>
+            ))}
+          </motion.div>
+
+
+
+
+
+
+
+
+          {/* <div className="flex items-center gap-4">
             <a href="#" className="text-muted-foreground hover:text-foreground transition-colors">
               <Github className="h-5 w-5" />
             </a>
@@ -93,7 +127,7 @@ const Hero = () => {
             <a href="#" className="text-muted-foreground hover:text-foreground transition-colors">
               <Phone className="h-5 w-5" />
             </a>
-          </div>
+          </div> */}
 
         </motion.div>
       </div>
