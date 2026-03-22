@@ -68,7 +68,10 @@ const Hero = () => {
 
           <div className="flex flex-wrap gap-4 mb-8">
             <Button size="lg" >
-              <a href="#contact">Get in Touch</a>
+              <a href="#contact">Get in Touch</a>    
+
+              {/* wow crazy */}
+
             </Button>
             {/* <Button size="lg" variant="outline">
               <a href="#projects">View Projects</a>
