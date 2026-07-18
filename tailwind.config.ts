@@ -43,6 +43,9 @@ export default {
           DEFAULT: "hsl(var(--accent))",
           foreground: "hsl(var(--accent-foreground))",
         },
+        amber: "hsl(var(--amber))",
+        panel: "hsl(var(--panel))",
+        line: "hsl(var(--line))",
         popover: {
           DEFAULT: "hsl(var(--popover))",
           foreground: "hsl(var(--popover-foreground))",

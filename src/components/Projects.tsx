@@ -1,148 +1,92 @@
+import { useState } from "react";
 import { motion } from "framer-motion";
-import { ExternalLink, Github, BookOpen, Coffee } from "lucide-react";
-import { Button } from "@/components/ui/button";
 
 const projects = [
   {
+    num: "LEVEL 01",
     title: "Bookish.fi",
-    subtitle: "Book Management App",
-    description:
-      "Full-stack web application for managing and tracking books. Built with modern technologies and agile methodologies.",
-    icon: BookOpen,
+    sub: "Book management app",
+    desc: "Full-stack web app for managing and tracking books. Built with agile methodology, UI/UX designed in Figma, Git-based CI/CD.",
     tech: ["React", "Node.js", "Express", "MongoDB"],
-    highlights: [
-      "UI/UX designed using Figma",
-      "Scrum and agile methodologies",
-      "Git-based version control with CI/CD",
-    ],
     github: "https://github.com/mustah21/bookish-checking",
-
   },
   {
-    title: "Cafeteria Simulation",
-    subtitle: "Rush Hour Simulator",
-    description:
-      "Simulator for a school cafeteria during rush hours with event-driven algorithms and time-based logic.",
-    icon: Coffee,
-    tech: ["Java", "JavaFX", "OOP", "Design Patterns"],
-    highlights: [
-      "Queue and Linked list data structures",
-      "Event-driven algorithms",
-      "Comprehensive documentation",
-    ],
+    num: "LEVEL 02",
+    title: "Cafeteria rush-hour sim",
+    sub: "Event-driven simulator",
+    desc: "Simulates a school cafeteria during rush hours using queue and linked-list data structures with event-driven algorithms.",
+    tech: ["Java", "JavaFX", "OOP", "Design patterns"],
     github: "https://github.com/mustah21/Java-simulator-project",
-
   },
-    {
-    title: "Personalized Study Planner",
-    subtitle: "Application for students to plan, organize and track their study activities",
-    description:
-      "Application for students to plan, organize and track their study activities.Integrates gemini API for task recommendations.",
-    icon: BookOpen,
-    tech: ["Typescript", "React", "Java-spring boot", "Postgres 17"],
-    highlights: [
-      "UI/UX designed in Figma",
-      "Fronend built in React, Typescript and tailwind CSS",
-      "Backend built in java-Spring boot ",
-    ],
+  {
+    num: "LEVEL 03",
+    title: "Study planner",
+    sub: "AI-assisted student planning app",
+    desc: "Lets students plan, organize, and track study activities, with Gemini API integration for task recommendations.",
+    tech: ["TypeScript", "React", "Spring Boot", "Postgres"],
     github: "https://github.com/mustah21/personalized-study-planner",
-
   },
 ];
 
+const ProjectCard = ({ project, index }: { project: (typeof projects)[number]; index: number }) => {
+  const [open, setOpen] = useState(false);
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 15 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true }}
+      transition={{ duration: 0.4, delay: index * 0.1 }}
+      onClick={() => setOpen((o) => !o)}
+      className="cursor-pointer border border-line bg-card p-5 transition-colors hover:border-[hsl(var(--green-dim))]"
+    >
+      <div className="mb-2.5 flex items-center justify-between">
+        <span className="text-[11px] tracking-wider text-primary">{project.num}</span>
+      </div>
+      <h4 className="mb-1 text-base text-foreground">{project.title}</h4>
+      <div className="mb-2.5 text-xs text-muted-foreground">{project.sub}</div>
+
+      {open && (
+        <div className="mb-3 text-[13px] text-muted-foreground">{project.desc}</div>
+      )}
+
+      <div className="mb-2.5 flex flex-wrap gap-1.5">
+        {project.tech.map((t) => (
+          <span key={t} className="border border-line px-1.5 py-0.5 text-[11px] text-primary">
+            {t}
+          </span>
+        ))}
+      </div>
+
+      <div className="text-[11px] text-muted-foreground">
+        {open ? <span className="text-primary">loaded ✓</span> : <span>click to load ▸</span>}
+      </div>
+
+      <a
+        href={project.github}
+        target="_blank"
+        rel="noopener noreferrer"
+        onClick={(e) => e.stopPropagation()}
+        className="mt-2.5 inline-block border-b border-dashed border-primary text-xs text-primary"
+      >
+        View code →
+      </a>
+    </motion.div>
+  );
+};
+
 const Projects = () => {
   return (
-    <section id="projects" className="py-24 relative bg-secondary/30">
+    <section id="projects" className="border-t border-dashed border-line py-20">
       <div className="container px-6">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
-        >
-          <h2 className="section-heading text-center mb-4">
-            Featured <span className="text-gradient">Projects</span>
-          </h2>
-          <p className="text-muted-foreground text-center text-lg mb-16 max-w-2xl mx-auto">
-            Some of the projects I've worked on that showcase my skills
-          </p>
+        <div className="seclabel">select a level</div>
+        <h2 className="mb-8 text-2xl font-extrabold text-foreground">Projects</h2>
 
-          <div className="max-w-5xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-8">
-            {projects.map((project, index) => (
-              <motion.div
-                key={project.title}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: index * 0.2 }}
-                className="card-gradient rounded-xl border border-border hover:border-primary/30 transition-all duration-300 overflow-hidden group"
-              >
-                {/* Header */}
-                <div className="p-6 border-b border-border">
-                  <div className="flex items-center gap-4 mb-4">
-                    <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center group-hover:bg-primary/20 transition-colors">
-                      <project.icon className="w-6 h-6 text-primary" />
-                    </div>
-                    <div>
-                      <h3 className="text-xl font-semibold">{project.title}</h3>
-                      <p className="text-sm text-muted-foreground">{project.subtitle}</p>
-                    </div>
-                  </div>
-                  <p className="text-muted-foreground">{project.description}</p>
-                </div>
-
-                {/* Content */}
-                <div className="p-6">
-                  {/* Tech stack */}
-                  <div className="flex flex-wrap gap-2 mb-6">
-                    {project.tech.map((tech) => (
-                      <span
-                        key={tech}
-                        className="px-2.5 py-1 rounded-md bg-secondary text-xs font-medium font-mono text-primary"
-                      >
-                        {tech}
-                      </span>
-                    ))}
-                  </div>
-
-                  {/* Highlights */}
-                  <ul className="space-y-2 mb-6">
-                    {project.highlights.map((highlight, i) => (
-                      <li key={i} className="text-sm text-muted-foreground flex items-start gap-2">
-                        <span className="w-1.5 h-1.5 rounded-full bg-primary mt-2 flex-shrink-0" />
-                        {highlight}
-                      </li>
-                    ))}
-                  </ul>
-
-                  {/* Actions */}
-                  <div className="flex gap-3">
-                    <Button
-                      asChild
-                      variant="outline"
-                      size="sm"
-                      className="flex-1"
-                    >
-                      <a
-                        href={project.github}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                      >
-                        <Github className="w-4 h-4 mr-2" />
-                        Code
-                      </a>
-                    </Button>
-
-                    {/* <Button size="sm" className="flex-1">
-                      <ExternalLink className="w-4 h-4 mr-2" />
-                      Demo 
-                    </Button> */}
-                  </div>
-                </div>
-              </motion.div>
-            ))}
-          </div>
-        </motion.div>
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {projects.map((project, index) => (
+            <ProjectCard key={project.title} project={project} index={index} />
+          ))}
+        </div>
       </div>
     </section>
   );

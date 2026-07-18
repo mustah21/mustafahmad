@@ -1,12 +1,8 @@
 const Footer = () => {
   return (
-    <footer className="py-8 border-t border-border">
+    <footer className="border-t border-dashed border-line py-8 text-center text-xs text-muted-foreground">
       <div className="container px-6">
-        <div className="flex flex-col md:flex-row items-center justify-between gap-4">
-          <p className="text-sm text-muted-foreground">
-            © {new Date().getFullYear()} Mustafa Ahmad. All rights reserved.
-          </p>
-        </div>
+        built by Mustafa Ahmad · try the konami code (↑↑↓↓←→←→BA)
       </div>
     </footer>
   );

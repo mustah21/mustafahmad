@@ -1,0 +1,1648 @@
+diff --git a/src/components/About.tsx b/src/components/About.tsx
+index 7098b06..aeacacd 100644
+--- a/src/components/About.tsx
++++ b/src/components/About.tsx
+@@ -1,67 +1,42 @@
+ import { motion } from "framer-motion";
+-import { Code2, Server, GitBranch, Globe } from "lucide-react";
+ 
+-const highlights = [
+-  {
+-    icon: Code2,
+-    title: "Frontend",
+-    description: "React, Next.js, TypeScript",
+-  },
+-  {
+-    icon: Server,
+-    title: "Backend",
+-    description: "Node.js, Java, Spring Boot, REST APIs",
+-  },
+-  {
+-    icon: GitBranch,
+-    title: "DevOps",
+-    description: "Docker, CI/CD, Jenkins, kubernetes",
+-  },
+-  {
+-    icon: Globe,
+-    title: "Databases",
+-    description: "PostgreSQL, MongoDB, MySQL",
+-  },
++const stats = [
++  { k: "Frontend", v: "React, Next.js, TypeScript" },
++  { k: "Backend", v: "Node.js, Java, Spring Boot, REST APIs" },
++  { k: "DevOps", v: "Docker, CI/CD, Jenkins, Kubernetes" },
++  { k: "Databases", v: "PostgreSQL, MongoDB, MySQL" },
++  { k: "Languages", v: "English, Urdu, Hindi, Finnish (basic)" },
+ ];
+ 
+ const About = () => {
+   return (
+-    <section id="about" className="py-24 relative">
++    <section id="about" className="border-t border-dashed border-line py-20">
+       <div className="container px-6">
+-        <motion.div
+-          initial={{ opacity: 0, y: 20 }}
+-          whileInView={{ opacity: 1, y: 0 }}
+-          viewport={{ once: true }}
+-          transition={{ duration: 0.6 }}
+-          className="max-w-4xl mx-auto"
+-        >
+-          <h2 className="section-heading text-center mb-4">
+-            About <span className="text-gradient">Me</span>
+-          </h2>
+-          <p className="text-muted-foreground text-center text-lg mb-16 max-w-2xl mx-auto">
+-              Specializing in the complete software lifecycle. 
+-              I design full-stack applications, architect network solutions, and automate deployments through containerization and CI/CD turning complex technical challenges into elegant, maintainable systems.
+-          </p>
++        <div className="seclabel">character sheet</div>
++        <h2 className="mb-8 text-2xl font-extrabold text-foreground">About</h2>
++        <p className="mb-8 max-w-2xl text-sm text-muted-foreground">
++          Specializes in the complete software lifecycle — designs full-stack applications,
++          architects network solutions, and automates deployments through containerization and
++          CI/CD.
++        </p>
+ 
+-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+-            {highlights.map((item, index) => (
+-              <motion.div
+-                key={item.title}
+-                initial={{ opacity: 0, y: 20 }}
+-                whileInView={{ opacity: 1, y: 0 }}
+-                viewport={{ once: true }}
+-                transition={{ duration: 0.5, delay: index * 0.1 }}
+-                className="card-gradient p-6 rounded-xl border border-border hover:border-primary/30 transition-all duration-300 group"
+-              >
+-                <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center mb-4 group-hover:bg-primary/20 transition-colors">
+-                  <item.icon className="w-6 h-6 text-primary" />
+-                </div>
+-                <h3 className="text-lg font-semibold mb-2">{item.title}</h3>
+-                <p className="text-muted-foreground text-sm">{item.description}</p>
+-              </motion.div>
+-            ))}
+-          </div>
+-        </motion.div>
++        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
++          {stats.map((stat, index) => (
++            <motion.div
++              key={stat.k}
++              initial={{ opacity: 0, y: 15 }}
++              whileInView={{ opacity: 1, y: 0 }}
++              viewport={{ once: true }}
++              transition={{ duration: 0.4, delay: index * 0.08 }}
++              className="border border-line bg-card p-4"
++            >
++              <div className="mb-2 text-xs uppercase tracking-wider text-muted-foreground">
++                {stat.k}
++              </div>
++              <div className="text-sm text-foreground">{stat.v}</div>
++            </motion.div>
++          ))}
++        </div>
+       </div>
+     </section>
+   );
+diff --git a/src/components/AchievementToasts.tsx b/src/components/AchievementToasts.tsx
+new file mode 100644
+index 0000000..bba2563
+--- /dev/null
++++ b/src/components/AchievementToasts.tsx
+@@ -0,0 +1,103 @@
++import { useEffect, useRef, useState } from "react";
++
++interface Toast {
++  id: number;
++  title: string;
++  name: string;
++}
++
++const ACHIEVEMENT_NAMES: Record<string, string> = {
++  about: "Read the character sheet",
++  skills: "Studied the skill tree",
++  experience: "Cleared two quests",
++  projects: "Reached the level select",
++  contact: "Found the contact terminal",
++};
++
++const KONAMI = [
++  "ArrowUp",
++  "ArrowUp",
++  "ArrowDown",
++  "ArrowDown",
++  "ArrowLeft",
++  "ArrowRight",
++  "ArrowLeft",
++  "ArrowRight",
++  "b",
++  "a",
++];
++
++let toastId = 0;
++
++const AchievementToasts = () => {
++  const [toasts, setToasts] = useState<Toast[]>([]);
++  const achievedRef = useRef<Set<string>>(new Set());
++
++  const pushToast = (title: string, name: string) => {
++    const id = ++toastId;
++    setToasts((t) => [...t, { id, title, name }]);
++    setTimeout(() => {
++      setToasts((t) => t.filter((toast) => toast.id !== id));
++    }, 3200);
++  };
++
++  useEffect(() => {
++    const sections = document.querySelectorAll("section[id]");
++    const observer = new IntersectionObserver(
++      (entries) => {
++        entries.forEach((entry) => {
++          const id = entry.target.id;
++          if (entry.isIntersecting && !achievedRef.current.has(id) && ACHIEVEMENT_NAMES[id]) {
++            achievedRef.current.add(id);
++            pushToast("Achievement unlocked", ACHIEVEMENT_NAMES[id]);
++          }
++        });
++      },
++      { threshold: 0.5 }
++    );
++    sections.forEach((s) => observer.observe(s));
++    return () => observer.disconnect();
++  }, []);
++
++  useEffect(() => {
++    let pos = 0;
++    const handleKeydown = (e: KeyboardEvent) => {
++      if (e.key === KONAMI[pos]) {
++        pos++;
++        if (pos === KONAMI.length) {
++          pushToast("Secret found", "Konami code activated — you know your stuff");
++          document.body.style.filter = "invert(1) hue-rotate(180deg)";
++          setTimeout(() => {
++            document.body.style.filter = "";
++          }, 1500);
++          pos = 0;
++        }
++      } else {
++        pos = e.key === KONAMI[0] ? 1 : 0;
++      }
++    };
++    window.addEventListener("keydown", handleKeydown);
++    return () => window.removeEventListener("keydown", handleKeydown);
++  }, []);
++
++  return (
++    <div className="fixed bottom-5 right-5 z-[100] flex flex-col gap-2.5 pointer-events-none">
++      {toasts.map((toast) => (
++        <div
++          key={toast.id}
++          className="toast-enter flex min-w-[220px] items-center gap-2.5 border border-primary bg-card px-4 py-3 text-xs shadow-lg"
++        >
++          <span className="text-lg text-primary">★</span>
++          <div>
++            <div className="text-[10px] uppercase tracking-wider text-muted-foreground">
++              {toast.title}
++            </div>
++            <div className="text-foreground">{toast.name}</div>
++          </div>
++        </div>
++      ))}
++    </div>
++  );
++};
++
++export default AchievementToasts;
+diff --git a/src/components/Contact.tsx b/src/components/Contact.tsx
+index e535afd..b0429aa 100644
+--- a/src/components/Contact.tsx
++++ b/src/components/Contact.tsx
+@@ -1,103 +1,54 @@
+-import { motion } from "framer-motion";
+-import { Mail, Phone, MapPin, Linkedin, Github, Send } from "lucide-react";
+-import { Button } from "@/components/ui/button";
++const rows = [
++  {
++    k: "Email",
++    v: "mustafa.ahmad@metropolia.fi",
++    href: "mailto:mustafa.ahmad@metropolia.fi",
++  },
++  { k: "Phone", v: "+358 449302118", href: "tel:+358449302118" },
++  {
++    k: "GitHub",
++    v: "github.com/mustah21",
++    href: "https://github.com/mustah21/",
++  },
++  {
++    k: "LinkedIn",
++    v: "linkedin.com/in/mustafa-ahmad",
++    href: "https://www.linkedin.com/in/mustafa-ahmad-002063332/",
++  },
++  { k: "Location", v: "Helsinki, Finland" },
++];
+ 
+ const Contact = () => {
+   return (
+-    <section id="contact" className="py-24 relative bg-secondary/30">
++    <section id="contact" className="border-t border-dashed border-line py-20">
+       <div className="container px-6">
+-        <motion.div
+-          initial={{ opacity: 0, y: 20 }}
+-          whileInView={{ opacity: 1, y: 0 }}
+-          viewport={{ once: true }}
+-          transition={{ duration: 0.6 }}
+-        >
+-          <h2 className="section-heading text-center mb-4">
+-            Let's <span className="text-gradient">Connect</span>
+-          </h2>
+-          <p className="text-muted-foreground text-center text-lg mb-16 max-w-2xl mx-auto">
+-            I'm always open to new opportunities and collaborations. Feel free to reach out!
+-          </p>
++        <div className="seclabel">connect</div>
++        <h2 className="mb-8 text-2xl font-extrabold text-foreground">Contact</h2>
+ 
+-          <div className="max-w-3xl mx-auto">
+-            <div className="card-gradient p-8 rounded-2xl border border-border">
+-              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+-                {/* Contact info */}
+-                <div className="space-y-6">
+-                  <h3 className="text-xl font-semibold mb-6">Contact Info</h3>
+-                  
+-                  <a
+-                    href="mailto:mustafa.ahmad@metropolia.fi"
+-                    className="flex items-center gap-4 p-4 rounded-lg bg-secondary/50 hover:bg-secondary transition-colors group"
+-                  >
+-                    <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center group-hover:bg-primary/20 transition-colors">
+-                      <Mail className="w-5 h-5 text-primary" />
+-                    </div>
+-                    <div>
+-                      <p className="text-sm text-muted-foreground">Email</p>
+-                      <p className="font-medium">mustafa.ahmad@metropolia.fi</p>
+-                    </div>
+-                  </a>
+-
+-                  <a
+-                    href="tel:+358449302118"
+-                    className="flex items-center gap-4 p-4 rounded-lg bg-secondary/50 hover:bg-secondary transition-colors group"
+-                  >
+-                    <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center group-hover:bg-primary/20 transition-colors">
+-                      <Phone className="w-5 h-5 text-primary" />
+-                    </div>
+-                    <div>
+-                      <p className="text-sm text-muted-foreground">Phone</p>
+-                      <p className="font-medium">+358 449302118</p>
+-                    </div>
+-                  </a>
+-
+-                  <div className="flex items-center gap-4 p-4 rounded-lg bg-secondary/50">
+-                    <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
+-                      <MapPin className="w-5 h-5 text-primary" />
+-                    </div>
+-                    <div>
+-                      <p className="text-sm text-muted-foreground">Location</p>
+-                      <p className="font-medium">Helsinki, Finland</p>
+-                    </div>
+-                  </div>
+-                </div>
+-
+-                {/* Social & CTA */}
+-                <div className="flex flex-col justify-between">
+-                  <div>
+-                    <h3 className="text-xl font-semibold mb-6">Social</h3>
+-                    <div className="flex gap-4 mb-8">
+-                      <a
+-                        href="https://www.linkedin.com/in/mustafa-ahmad-002063332/"
+-                        target="_blank"
+-                        rel="noopener noreferrer"
+-                        className="w-12 h-12 rounded-lg bg-secondary hover:bg-secondary/80 border border-border hover:border-primary/50 flex items-center justify-center transition-all duration-300"
+-                      >
+-                        <Linkedin className="w-5 h-5" />
+-                      </a>
+-                      <a
+-                        href="https://github.com/mustah21"
+-                        target="_blank"
+-                        rel="noopener noreferrer"
+-                        className="w-12 h-12 rounded-lg bg-secondary hover:bg-secondary/80 border border-border hover:border-primary/50 flex items-center justify-center transition-all duration-300"
+-                      >
+-                        <Github className="w-5 h-5" />
+-                      </a>
+-                    </div>
+-                  </div>
+-
+-                  <Button size="lg" className="w-full glow-effect" asChild>
+-                    <a href="mailto:mustafa.ahmad@metropolia.fi">
+-                      <Send className="w-4 h-4 mr-2" />
+-                      Send Message
+-                    </a>
+-                  </Button>
+-                </div>
+-              </div>
++        <div className="mx-auto max-w-2xl border border-line bg-card p-6">
++          {rows.map((row, i) => (
++            <div
++              key={row.k}
++              className={`flex items-center justify-between py-2.5 text-[13px] ${
++                i < rows.length - 1 ? "border-b border-dashed border-line" : ""
++              }`}
++            >
++              <span className="text-muted-foreground">{row.k}</span>
++              {row.href ? (
++                <a
++                  href={row.href}
++                  target={row.href.startsWith("http") ? "_blank" : undefined}
++                  rel="noopener noreferrer"
++                  className="text-primary transition-colors hover:text-foreground"
++                >
++                  {row.v}
++                </a>
++              ) : (
++                <span className="text-foreground">{row.v}</span>
++              )}
+             </div>
+-          </div>
+-        </motion.div>
++          ))}
++        </div>
+       </div>
+     </section>
+   );
+diff --git a/src/components/Education.tsx b/src/components/Education.tsx
+deleted file mode 100644
+index 1f49f59..0000000
+--- a/src/components/Education.tsx
++++ /dev/null
+@@ -1,104 +0,0 @@
+-import { motion } from "framer-motion";
+-import { GraduationCap, Award } from "lucide-react";
+-
+-const education = [
+-  {
+-    degree: "Bachelor of Engineering in Information Technology",
+-    institution: "Metropolia University of Applied Sciences",
+-    location: "Helsinki, Finland",
+-    period: "Aug 2024 – Present",
+-    major: "Software Engineering - Mobile Development",
+-    icon: GraduationCap,
+-  },
+-  {
+-    degree: "GCE Advanced Level",
+-    institution: "Cambridge International Examinations",
+-    period: "2021 – 2023",
+-    icon: Award,
+-  },
+-];
+-
+-const languages = [
+-  { name: "English", level: "Fluent" },
+-  { name: "Urdu", level: "Native" },
+-  { name: "Hindi", level: "Fluent" },
+-  { name: "Finnish", level: "Basic" },
+-];
+-
+-const Education = () => {
+-  return (
+-    <section id="education" className="py-24 relative">
+-      <div className="container px-6">
+-        <motion.div
+-          initial={{ opacity: 0, y: 20 }}
+-          whileInView={{ opacity: 1, y: 0 }}
+-          viewport={{ once: true }}
+-          transition={{ duration: 0.6 }}
+-        >
+-          <h2 className="section-heading text-center mb-4">
+-            Education & <span className="text-gradient">Languages</span>
+-          </h2>
+-          <p className="text-muted-foreground text-center text-lg mb-16 max-w-2xl mx-auto">
+-            Academic background and language proficiency
+-          </p>
+-
+-          <div className="max-w-4xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-8">
+-            {/* Education cards */}
+-            <div className="lg:col-span-2 space-y-6">
+-              {education.map((edu, index) => (
+-                <motion.div
+-                  key={index}
+-                  initial={{ opacity: 0, x: -20 }}
+-                  whileInView={{ opacity: 1, x: 0 }}
+-                  viewport={{ once: true }}
+-                  transition={{ duration: 0.5, delay: index * 0.1 }}
+-                  className="card-gradient p-6 rounded-xl border border-border hover:border-primary/30 transition-all duration-300"
+-                >
+-                  <div className="flex items-start gap-4">
+-                    <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
+-                      <edu.icon className="w-6 h-6 text-primary" />
+-                    </div>
+-                    <div>
+-                      <p className="text-sm text-primary font-medium mb-1">{edu.period}</p>
+-                      <h3 className="text-lg font-semibold mb-1">{edu.degree}</h3>
+-                      <p className="text-muted-foreground mb-1">{edu.institution}</p>
+-                      {edu.location && (
+-                        <p className="text-sm text-muted-foreground">{edu.location}</p>
+-                      )}
+-                      {edu.major && (
+-                        <p className="text-sm text-primary mt-2">Major: {edu.major}</p>
+-                      )}
+-                    </div>
+-                  </div>
+-                </motion.div>
+-              ))}
+-            </div>
+-
+-            {/* Languages card */}
+-            <motion.div
+-              initial={{ opacity: 0, x: 20 }}
+-              whileInView={{ opacity: 1, x: 0 }}
+-              viewport={{ once: true }}
+-              transition={{ duration: 0.5, delay: 0.2 }}
+-              className="card-gradient p-6 rounded-xl border border-border"
+-            >
+-              <h3 className="text-lg font-semibold mb-6 text-primary">Languages</h3>
+-              <div className="space-y-4">
+-                {languages.map((lang, index) => (
+-                  <div key={lang.name} className="flex items-center justify-between">
+-                    <span className="font-medium">{lang.name}</span>
+-                    <span className="text-sm text-muted-foreground px-3 py-1 rounded-full bg-secondary">
+-                      {lang.level}
+-                    </span>
+-                  </div>
+-                ))}
+-              </div>
+-            </motion.div>
+-          </div>
+-        </motion.div>
+-      </div>
+-    </section>
+-  );
+-};
+-
+-export default Education;
+diff --git a/src/components/Experience.tsx b/src/components/Experience.tsx
+index 3205054..557f2cc 100644
+--- a/src/components/Experience.tsx
++++ b/src/components/Experience.tsx
+@@ -1,86 +1,89 @@
+ import { motion } from "framer-motion";
+-import { Briefcase } from "lucide-react";
+ 
+-const experiences = [
++interface Quest {
++  tag: string;
++  title: string;
++  sub?: string;
++  items?: string[];
++  reward: string;
++}
++
++const quests: Quest[] = [
+   {
+-    title: "Network Intern",
+-    company: "Himont Int",
+-    period: "June 2024 – Aug 2024",
+-    responsibilities: [
++    tag: "June 2024 – Aug 2024",
++    title: "Network Intern — Himont Int",
++    sub: "Enterprise infrastructure ops",
++    items: [
+       "Oversaw daily network operations, ensuring uptime across enterprise infrastructure",
+       "Performed hardware maintenance, gained expertise in networking technologies",
+-      "Documented procedures creating knowledge base that improved team efficiency",
++      "Documented procedures, building a knowledge base that improved team efficiency",
+     ],
++    reward: "+40 Networking XP",
+   },
+   {
+-    title: "Tech Intern - Quality Assurance",
+-    company: "Tech Company",
+-    period: "June 2022 – Aug 2022",
+-    responsibilities: [
+-      "Developed full stack components using HTML, CSS, JavaScript for web applications",
++    tag: "June 2022 – Aug 2022",
++    title: "Tech Intern — Quality Assurance",
++    sub: "Full-stack + QA",
++    items: [
++      "Developed full-stack components using HTML, CSS, JavaScript",
+       "Designed UI/UX assets with Adobe suite and Figma",
+-      "Conducted quality testing identifying bugs before deployment",
+-      "Gained practical experience in full development lifecycle from design to deployment",
++      "Conducted quality testing, catching bugs before deployment",
+     ],
++    reward: "+30 QA XP",
++  },
++  {
++    tag: "Aug 2024 – Present",
++    title: "BEng Information Technology — Metropolia UAS",
++    sub: "Helsinki, Finland · Major: Software Engineering, Mobile Development",
++    reward: "In progress",
++  },
++  {
++    tag: "2021 – 2023",
++    title: "GCE Advanced Level — Cambridge International",
++    reward: "+Foundation XP",
+   },
+-  
+ ];
+ 
+ const Experience = () => {
+   return (
+-    <section id="experience" className="py-24 relative">
++    <section id="experience" className="border-t border-dashed border-line py-20">
+       <div className="container px-6">
+-        <motion.div
+-          initial={{ opacity: 0, y: 20 }}
+-          whileInView={{ opacity: 1, y: 0 }}
+-          viewport={{ once: true }}
+-          transition={{ duration: 0.6 }}
+-        >
+-          <h2 className="section-heading text-center mb-4">
+-            Work <span className="text-gradient">Experience</span>
+-          </h2>
+-          <p className="text-muted-foreground text-center text-lg mb-16 max-w-2xl mx-auto">
+-            Professional experiences that shaped my development journey
+-          </p>
+-
+-          <div className="max-w-3xl mx-auto relative">
+-            {/* Timeline line */}
+-            <div className="absolute left-0 md:left-1/2 top-0 bottom-0 w-px bg-border md:-translate-x-1/2" />
+-
+-            {experiences.map((exp, index) => (
+-              <motion.div
+-                key={index}
+-                initial={{ opacity: 0, x: index % 2 === 0 ? -20 : 20 }}
+-                whileInView={{ opacity: 1, x: 0 }}
+-                viewport={{ once: true }}
+-                transition={{ duration: 0.5, delay: index * 0.2 }}
+-                className={`relative pl-10 md:pl-0 pb-12 last:pb-0 ${
+-                  index % 2 === 0 ? "md:pr-[calc(50%+2rem)]" : "md:pl-[calc(50%+2rem)]"
+-                }`}
+-              >
+-                {/* Timeline dot */}
+-                <div className="absolute left-0 md:left-1/2 top-0 w-4 h-4 rounded-full bg-primary glow-effect md:-translate-x-1/2" />
++        <div className="seclabel">quest log — completed</div>
++        <h2 className="mb-8 text-2xl font-extrabold text-foreground">Experience &amp; education</h2>
+ 
+-                <div className="card-gradient p-6 rounded-xl border border-border hover:border-primary/30 transition-all duration-300">
+-                  <div className="flex items-center gap-2 text-primary mb-2">
+-                    <Briefcase className="w-4 h-4" />
+-                    <span className="text-sm font-medium">{exp.period}</span>
+-                  </div>
+-                  <h3 className="text-xl font-semibold mb-1">{exp.title}</h3>
+-                  <p className="text-muted-foreground mb-4">{exp.company}</p>
+-                  <ul className="space-y-2">
+-                    {exp.responsibilities.map((item, i) => (
+-                      <li key={i} className="text-sm text-muted-foreground flex items-start gap-2">
+-                        <span className="w-1.5 h-1.5 rounded-full bg-primary mt-2 flex-shrink-0" />
+-                        {item}
+-                      </li>
+-                    ))}
+-                  </ul>
+-                </div>
+-              </motion.div>
+-            ))}
+-          </div>
+-        </motion.div>
++        <div className="mx-auto max-w-3xl">
++          {quests.map((quest, index) => (
++            <motion.div
++              key={quest.title}
++              initial={{ opacity: 0, y: 15 }}
++              whileInView={{ opacity: 1, y: 0 }}
++              viewport={{ once: true }}
++              transition={{ duration: 0.4, delay: index * 0.08 }}
++              className="relative mb-4 border border-line bg-card py-4 pl-[52px] pr-5"
++            >
++              <div className="absolute left-4 top-[18px] flex h-[22px] w-[22px] items-center justify-center rounded-full bg-primary text-xs font-extrabold text-background">
++                ✓
++              </div>
++              <div className="text-[11px] uppercase tracking-wider text-muted-foreground">
++                {quest.tag}
++              </div>
++              <h4 className="mb-0.5 mt-1 text-[15px] text-foreground">{quest.title}</h4>
++              {quest.sub && (
++                <div className="mb-2.5 text-[13px] text-muted-foreground">{quest.sub}</div>
++              )}
++              {quest.items && (
++                <ul className="list-disc space-y-1 pl-[18px] text-[13px] text-muted-foreground">
++                  {quest.items.map((item) => (
++                    <li key={item}>{item}</li>
++                  ))}
++                </ul>
++              )}
++              <span className="mt-2.5 inline-block border border-dashed border-accent px-2 py-0.5 text-[11px] text-accent">
++                {quest.reward}
++              </span>
++            </motion.div>
++          ))}
++        </div>
+       </div>
+     </section>
+   );
+diff --git a/src/components/Footer.tsx b/src/components/Footer.tsx
+index a42a2dc..a5dcc7e 100644
+--- a/src/components/Footer.tsx
++++ b/src/components/Footer.tsx
+@@ -1,12 +1,8 @@
+ const Footer = () => {
+   return (
+-    <footer className="py-8 border-t border-border">
++    <footer className="border-t border-dashed border-line py-8 text-center text-xs text-muted-foreground">
+       <div className="container px-6">
+-        <div className="flex flex-col md:flex-row items-center justify-between gap-4">
+-          <p className="text-sm text-muted-foreground">
+-            © {new Date().getFullYear()} Mustafa Ahmad. All rights reserved.
+-          </p>
+-        </div>
++        built by Mustafa Ahmad · try the konami code (↑↑↓↓←→←→BA)
+       </div>
+     </footer>
+   );
+diff --git a/src/components/Hero.tsx b/src/components/Hero.tsx
+index 9b74736..f9cba6c 100644
+--- a/src/components/Hero.tsx
++++ b/src/components/Hero.tsx
+@@ -1,149 +1,96 @@
++import { useEffect, useState } from "react";
+ import { motion } from "framer-motion";
+-import { ArrowDown, Github, Linkedin, Mail, Phone } from "lucide-react";
+-import { Button } from "@/components/ui/button";
+-import profileImage from "@/assets/profile.jpg";
+-import profileImage2 from "@/assets/profile2.jpeg";
+-
+ 
++const BOOT_LINES = [
++  "> booting portfolio.exe",
++  "> loading modules: react, typescript, tailwind",
++  "> connecting to github.com/mustah21 ... ok",
++  "> mounting sections: about, skills, quests, levels",
++  "> ready.",
++];
+ 
+ const Hero = () => {
+-  return (
+-    <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
+-      {/* Background grid — YOUR ORIGINAL */}
+-      <div className="absolute inset-0 bg-grid-white/[0.02] bg-[size:50px_50px]" />
+-
+-      {/* Gradient orb — YOUR ORIGINAL */}
+-      <div className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-purple-500/20 rounded-full blur-3xl" />
+-
+-      {/* Main content — side by side */}
+-      <div className="relative z-10 max-w-6xl mx-auto px-6 flex flex-col md:flex-row items-center gap-12 md:gap-20">
+-
+-        {/* ── LEFT: Image ── */}
+-        <motion.div
+-          initial={{ opacity: 0, x: -40 }}
+-          animate={{ opacity: 1, x: 0 }}
+-          transition={{ duration: 0.6 }}
+-          className="relative flex-shrink-0"
+-        >
+-
+-          <div className="absolute inset-0 rounded-full border-2 border-purple-500/30 scale-110" />
+-
+-          <img
+-            src={profileImage2}
+-            alt="Mustafa Ahmad"
+-            className="w-56 h-56 md:w-72 md:h-72 rounded-full object-cover border-4 border-purple-500/40 shadow-xl shadow-purple-500/20"
+-          />
+-
++  const [visibleLines, setVisibleLines] = useState(0);
+ 
+-          {/* <motion.div
+-            initial={{ opacity: 0, y: 10 }}
+-            animate={{ opacity: 1, y: 0 }}
+-            transition={{ delay: 0.4 }}
+-            className="absolute -bottom-3 left-1/2 -translate-x-1/2 flex items-center gap-2 bg-background/80 backdrop-blur border border-purple-500/30 rounded-full px-4 py-1.5 text-sm whitespace-nowrap shadow-lg"
+-          >
+-            <span className="w-2 h-2 rounded-full bg-green-400 animate-pulse" />
+-            Available for opportunities
+-          </motion.div> */}
++  useEffect(() => {
++    const timers = BOOT_LINES.map((_, i) =>
++      setTimeout(() => setVisibleLines((v) => Math.max(v, i + 1)), i * 220)
++    );
++    return () => timers.forEach(clearTimeout);
++  }, []);
+ 
+-        </motion.div>
++  return (
++    <header className="relative flex min-h-screen flex-col justify-center">
++      <div className="container px-6">
++        <div className="mb-6">
++          {BOOT_LINES.map((line, i) => (
++            <div
++              key={line}
++              className="text-[13px] whitespace-pre transition-opacity duration-300"
++              style={{
++                color: "hsl(var(--green-dim))",
++                opacity: i < visibleLines ? 1 : 0,
++              }}
++            >
++              {line}
++            </div>
++          ))}
++        </div>
+ 
+         <motion.div
+-          initial={{ opacity: 0, x: 40 }}
+-          animate={{ opacity: 1, x: 0 }}
+-          transition={{ duration: 0.6 }}
+-          className="flex flex-col items-start text-left"
++          initial={{ opacity: 0, y: 10 }}
++          animate={{ opacity: 1, y: 0 }}
++          transition={{ delay: BOOT_LINES.length * 0.22, duration: 0.5 }}
+         >
+-          <h1 className="text-4xl md:text-6xl font-bold tracking-tight mb-2">
++          <div className="mb-1.5 text-[13px] text-muted-foreground">$ whoami</div>
++          <h1 className="my-1.5 text-[clamp(32px,6vw,58px)] font-extrabold text-foreground">
+             Mustafa Ahmad
++            <span className="caret">&nbsp;</span>
+           </h1>
+-
+-          <p className="text-xl md:text-2xl text-purple-400 font-medium mb-4">
+-            Software Engineer
+-          </p>
+-
+-          <p className="text-muted-foreground text-base md:text-lg max-w-md mb-8 leading-relaxed">
+-            Full stack developer passionate about building scalable applications
+-            and crafting exceptional user experiences.
++          <div className="mb-3.5 text-lg text-primary">&gt; Software Engineer</div>
++          <p className="mb-6 max-w-[520px] text-sm text-muted-foreground">
++            Full-stack developer building scalable applications end to end — from network
++            infrastructure up through APIs to the UI. Currently levelling up in Helsinki, Finland.
+           </p>
+ 
+-          <div className="flex flex-wrap gap-4 mb-8">
+-            <Button size="lg" >
+-              <a href="#contact">Get in Touch</a>    
+-
+-              {/* wow crazy */}
+-
+-            </Button>
+-            {/* <Button size="lg" variant="outline">
+-              <a href="#projects">View Projects</a>
+-            </Button> */}
+-
+-            <Button size="lg" variant="outline">
+-              <a href="/Mustafa_Ahmad-Resume.pdf" download>Download CV</a>
+-            </Button>
+-
++          <div className="mb-6 flex flex-wrap gap-3.5">
++            <a
++              href="#contact"
++              className="border px-[18px] py-2.5 text-[13px] text-primary transition-colors hover:bg-primary hover:text-background"
++              style={{ borderColor: "hsl(var(--green-dim))" }}
++            >
++              Get in touch
++            </a>
++            <a
++              href="/Mustafa_Ahmad-Resume.pdf"
++              download
++              className="border border-line px-[18px] py-2.5 text-[13px] text-muted-foreground transition-colors hover:border-muted-foreground hover:text-foreground"
++            >
++              Download CV
++            </a>
+           </div>
+ 
+-
+-<motion.div
+-            initial={{ opacity: 0 }}
+-            animate={{ opacity: 1 }}
+-            transition={{ delay: 0.5 }}
+-            className="flex items-center gap-6"
+-          >
++          <div className="flex flex-wrap gap-4 text-[13px]">
+             {[
+-              { icon: Github, label: "GitHub", href: "https://github.com/mustah21/" },
+-              { icon: Linkedin, label: "LinkedIn", href: "https://www.linkedin.com/in/mustafa-ahmad-002063332/" },
+-              { icon: Mail, label: "Email", href: "mailto:mustafa.ahmad@metropolia.fi" },
+-            ].map((social, index) => (
+-              <motion.a
++              { label: "GitHub", href: "https://github.com/mustah21/" },
++              { label: "LinkedIn", href: "https://www.linkedin.com/in/mustafa-ahmad-002063332/" },
++              { label: "Email", href: "mailto:mustafa.ahmad@metropolia.fi" },
++            ].map((social) => (
++              <a
+                 key={social.label}
+                 href={social.href}
+-                whileHover={{ scale: 1.2, rotate: 5 }}
+-                whileTap={{ scale: 0.95 }}
+-                className="relative group"
++                target={social.label !== "Email" ? "_blank" : undefined}
++                rel="noopener noreferrer"
++                className="border-b border-dashed border-line text-muted-foreground transition-colors hover:border-primary hover:text-primary"
+               >
+-                <div className="absolute inset-0 bg-gradient-to-r from-cyan-500 to-blue-500 rounded-lg blur opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+-                <div className="relative bg-background p-3 rounded-lg border border-white/10 group-hover:border-white/30 transition-all">
+-                  <social.icon className="h-5 w-5 text-cyan-400 group-hover:text-cyan-300" />
+-                </div>
+-              </motion.a>
++                {social.label}
++              </a>
+             ))}
+-          </motion.div>
+-
+-
+-
+-
+-
+-
+-
+-
+-          {/* <div className="flex items-center gap-4">
+-            <a href="#" className="text-muted-foreground hover:text-foreground transition-colors">
+-              <Github className="h-5 w-5" />
+-            </a>
+-            <a href="#" className="text-muted-foreground hover:text-foreground transition-colors">
+-              <Linkedin className="h-5 w-5" />
+-            </a>
+-            <a href="#" className="text-muted-foreground hover:text-foreground transition-colors">
+-              <Phone className="h-5 w-5" />
+-            </a>
+-          </div> */}
+-
++          </div>
+         </motion.div>
+       </div>
+-
+-
+-      <motion.div
+-        animate={{ y: [0, 8, 0] }}
+-        transition={{ repeat: Infinity, duration: 1.5 }}
+-        className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-1 text-muted-foreground text-sm"
+-      >
+-        <span>Scroll down</span>
+-        <ArrowDown className="h-4 w-4" />
+-      </motion.div>
+-    </section>
+-
++    </header>
+   );
+ };
+ 
+-export default Hero;
+\ No newline at end of file
++export default Hero;
+diff --git a/src/components/Navbar.tsx b/src/components/Navbar.tsx
+index 550f31c..081439b 100644
+--- a/src/components/Navbar.tsx
++++ b/src/components/Navbar.tsx
+@@ -1,112 +1,77 @@
+ import { useState, useEffect } from "react";
+ import { motion, AnimatePresence } from "framer-motion";
+ import { Menu, X } from "lucide-react";
+-import { Button } from "@/components/ui/button";
+-import cv from "@/public/Resume.pdf";
+-
+ 
+ const navLinks = [
+-  { name: "About", href: "#about" },
+-  { name: "Skills", href: "#skills" },
+-  { name: "Experience", href: "#experience" },
+-  { name: "Projects", href: "#projects" },
+-  { name: "Education", href: "#education" },
+-  { name: "Contact", href: "#contact" },
++  { name: "about", href: "#about" },
++  { name: "skills", href: "#skills" },
++  { name: "quests", href: "#experience" },
++  { name: "levels", href: "#projects" },
++  { name: "contact", href: "#contact" },
+ ];
+ 
+ const Navbar = () => {
+-  const [isScrolled, setIsScrolled] = useState(false);
+   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+ 
+   useEffect(() => {
+-    const handleScroll = () => {
+-      setIsScrolled(window.scrollY > 50);
++    document.body.style.overflow = isMobileMenuOpen ? "hidden" : "";
++    return () => {
++      document.body.style.overflow = "";
+     };
+-    window.addEventListener("scroll", handleScroll);
+-    return () => window.removeEventListener("scroll", handleScroll);
+-  }, []);
++  }, [isMobileMenuOpen]);
+ 
+   return (
+-    <motion.header
+-      initial={{ y: -100 }}
+-      animate={{ y: 0 }}
+-      transition={{ duration: 0.5 }}
+-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${isScrolled
+-        ? "bg-background/80 backdrop-blur-lg border-b border-border"
+-        : "bg-transparent"
+-        }`}
+-    >
+-      <nav className="container px-6 py-4 flex items-center justify-between">
+-        {/* Logo */}
+-        <a href="#" className="text-xl font-bold">
+-          M<span className="text-primary">.</span>A
++    <nav className="sticky top-0 z-20 border-b border-line bg-background/90 backdrop-blur-sm">
++      <div className="container flex items-center justify-between px-6 py-3.5">
++        <a href="#" className="font-extrabold tracking-wider text-primary">
++          MA://
+         </a>
+ 
+-        {/* Desktop nav */}
+-        <div className="hidden md:flex items-center gap-8">
++        <div className="hidden items-center gap-5 text-[13px] md:flex">
+           {navLinks.map((link) => (
+             <a
+               key={link.name}
+               href={link.href}
+-              className="text-sm text-muted-foreground hover:text-foreground transition-colors"
++              className="text-muted-foreground transition-colors hover:text-primary"
+             >
+               {link.name}
+             </a>
+           ))}
+-          <Button size="sm" asChild>
+-            <a href="#contact">Get in Touch</a>
+-          </Button>
+-          {/* <Button size="sm" asChild>
+-            <a href="/Mustafa_Ahmad-Resume.pdf" download>Download CV</a>
+-          </Button> */}
+         </div>
+ 
+-        {/* Mobile menu button */}
+         <button
+-          className="md:hidden p-2"
++          className="p-2 text-muted-foreground md:hidden"
+           onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
++          aria-label="Toggle menu"
+         >
+-          {isMobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
++          {isMobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+         </button>
+-      </nav>
++      </div>
+ 
+-      {/* Mobile menu */}
+       <AnimatePresence>
+         {isMobileMenuOpen && (
+           <motion.div
+             initial={{ opacity: 0, height: 0 }}
+             animate={{ opacity: 1, height: "auto" }}
+             exit={{ opacity: 0, height: 0 }}
+-            className="md:hidden bg-background/95 backdrop-blur-lg border-b border-border"
++            className="border-t border-line bg-background md:hidden"
+           >
+-            <div className="container px-6 py-4 flex flex-col gap-4">
++            <div className="container flex flex-col gap-1 px-6 py-4 text-[13px]">
+               {navLinks.map((link) => (
+                 <a
+                   key={link.name}
+                   href={link.href}
+                   onClick={() => setIsMobileMenuOpen(false)}
+-                  className="text-sm text-muted-foreground hover:text-foreground transition-colors py-2"
++                  className="py-2 text-muted-foreground transition-colors hover:text-primary"
+                 >
+                   {link.name}
+                 </a>
+               ))}
+-              <Button size="sm" className="w-full" asChild>
+-                <a href="#contact" onClick={() => setIsMobileMenuOpen(false)}>
+-                  Get in Touch
+-                </a>
+-              </Button>
+-
+-              <Button size="sm" className="w-full" asChild>
+-                <a href="/Mustafa_Ahmad-Resume.pdf" download onClick={() => setIsMobileMenuOpen(false)}>
+-                  Download CV
+-                </a>
+-              </Button>
+-            
+             </div>
+           </motion.div>
+         )}
+       </AnimatePresence>
+-    </motion.header>
++    </nav>
+   );
+ };
+ 
+diff --git a/src/components/Projects.tsx b/src/components/Projects.tsx
+index 91d316f..a478cc1 100644
+--- a/src/components/Projects.tsx
++++ b/src/components/Projects.tsx
+@@ -1,148 +1,92 @@
++import { useState } from "react";
+ import { motion } from "framer-motion";
+-import { ExternalLink, Github, BookOpen, Coffee } from "lucide-react";
+-import { Button } from "@/components/ui/button";
+ 
+ const projects = [
+   {
++    num: "LEVEL 01",
+     title: "Bookish.fi",
+-    subtitle: "Book Management App",
+-    description:
+-      "Full-stack web application for managing and tracking books. Built with modern technologies and agile methodologies.",
+-    icon: BookOpen,
++    sub: "Book management app",
++    desc: "Full-stack web app for managing and tracking books. Built with agile methodology, UI/UX designed in Figma, Git-based CI/CD.",
+     tech: ["React", "Node.js", "Express", "MongoDB"],
+-    highlights: [
+-      "UI/UX designed using Figma",
+-      "Scrum and agile methodologies",
+-      "Git-based version control with CI/CD",
+-    ],
+     github: "https://github.com/mustah21/bookish-checking",
+-
+   },
+   {
+-    title: "Cafeteria Simulation",
+-    subtitle: "Rush Hour Simulator",
+-    description:
+-      "Simulator for a school cafeteria during rush hours with event-driven algorithms and time-based logic.",
+-    icon: Coffee,
+-    tech: ["Java", "JavaFX", "OOP", "Design Patterns"],
+-    highlights: [
+-      "Queue and Linked list data structures",
+-      "Event-driven algorithms",
+-      "Comprehensive documentation",
+-    ],
++    num: "LEVEL 02",
++    title: "Cafeteria rush-hour sim",
++    sub: "Event-driven simulator",
++    desc: "Simulates a school cafeteria during rush hours using queue and linked-list data structures with event-driven algorithms.",
++    tech: ["Java", "JavaFX", "OOP", "Design patterns"],
+     github: "https://github.com/mustah21/Java-simulator-project",
+-
+   },
+-    {
+-    title: "Personalized Study Planner",
+-    subtitle: "Application for students to plan, organize and track their study activities",
+-    description:
+-      "Application for students to plan, organize and track their study activities.Integrates gemini API for task recommendations.",
+-    icon: BookOpen,
+-    tech: ["Typescript", "React", "Java-spring boot", "Postgres 17"],
+-    highlights: [
+-      "UI/UX designed in Figma",
+-      "Fronend built in React, Typescript and tailwind CSS",
+-      "Backend built in java-Spring boot ",
+-    ],
++  {
++    num: "LEVEL 03",
++    title: "Study planner",
++    sub: "AI-assisted student planning app",
++    desc: "Lets students plan, organize, and track study activities, with Gemini API integration for task recommendations.",
++    tech: ["TypeScript", "React", "Spring Boot", "Postgres"],
+     github: "https://github.com/mustah21/personalized-study-planner",
+-
+   },
+ ];
+ 
+-const Projects = () => {
++const ProjectCard = ({ project, index }: { project: (typeof projects)[number]; index: number }) => {
++  const [open, setOpen] = useState(false);
++
+   return (
+-    <section id="projects" className="py-24 relative bg-secondary/30">
+-      <div className="container px-6">
+-        <motion.div
+-          initial={{ opacity: 0, y: 20 }}
+-          whileInView={{ opacity: 1, y: 0 }}
+-          viewport={{ once: true }}
+-          transition={{ duration: 0.6 }}
+-        >
+-          <h2 className="section-heading text-center mb-4">
+-            Featured <span className="text-gradient">Projects</span>
+-          </h2>
+-          <p className="text-muted-foreground text-center text-lg mb-16 max-w-2xl mx-auto">
+-            Some of the projects I've worked on that showcase my skills
+-          </p>
++    <motion.div
++      initial={{ opacity: 0, y: 15 }}
++      whileInView={{ opacity: 1, y: 0 }}
++      viewport={{ once: true }}
++      transition={{ duration: 0.4, delay: index * 0.1 }}
++      onClick={() => setOpen((o) => !o)}
++      className="cursor-pointer border border-line bg-card p-5 transition-colors hover:border-[hsl(var(--green-dim))]"
++    >
++      <div className="mb-2.5 flex items-center justify-between">
++        <span className="text-[11px] tracking-wider text-primary">{project.num}</span>
++      </div>
++      <h4 className="mb-1 text-base text-foreground">{project.title}</h4>
++      <div className="mb-2.5 text-xs text-muted-foreground">{project.sub}</div>
+ 
+-          <div className="max-w-5xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-8">
+-            {projects.map((project, index) => (
+-              <motion.div
+-                key={project.title}
+-                initial={{ opacity: 0, y: 20 }}
+-                whileInView={{ opacity: 1, y: 0 }}
+-                viewport={{ once: true }}
+-                transition={{ duration: 0.5, delay: index * 0.2 }}
+-                className="card-gradient rounded-xl border border-border hover:border-primary/30 transition-all duration-300 overflow-hidden group"
+-              >
+-                {/* Header */}
+-                <div className="p-6 border-b border-border">
+-                  <div className="flex items-center gap-4 mb-4">
+-                    <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center group-hover:bg-primary/20 transition-colors">
+-                      <project.icon className="w-6 h-6 text-primary" />
+-                    </div>
+-                    <div>
+-                      <h3 className="text-xl font-semibold">{project.title}</h3>
+-                      <p className="text-sm text-muted-foreground">{project.subtitle}</p>
+-                    </div>
+-                  </div>
+-                  <p className="text-muted-foreground">{project.description}</p>
+-                </div>
++      {open && (
++        <div className="mb-3 text-[13px] text-muted-foreground">{project.desc}</div>
++      )}
+ 
+-                {/* Content */}
+-                <div className="p-6">
+-                  {/* Tech stack */}
+-                  <div className="flex flex-wrap gap-2 mb-6">
+-                    {project.tech.map((tech) => (
+-                      <span
+-                        key={tech}
+-                        className="px-2.5 py-1 rounded-md bg-secondary text-xs font-medium font-mono text-primary"
+-                      >
+-                        {tech}
+-                      </span>
+-                    ))}
+-                  </div>
++      <div className="mb-2.5 flex flex-wrap gap-1.5">
++        {project.tech.map((t) => (
++          <span key={t} className="border border-line px-1.5 py-0.5 text-[11px] text-primary">
++            {t}
++          </span>
++        ))}
++      </div>
++
++      <div className="text-[11px] text-muted-foreground">
++        {open ? <span className="text-primary">loaded ✓</span> : <span>click to load ▸</span>}
++      </div>
+ 
+-                  {/* Highlights */}
+-                  <ul className="space-y-2 mb-6">
+-                    {project.highlights.map((highlight, i) => (
+-                      <li key={i} className="text-sm text-muted-foreground flex items-start gap-2">
+-                        <span className="w-1.5 h-1.5 rounded-full bg-primary mt-2 flex-shrink-0" />
+-                        {highlight}
+-                      </li>
+-                    ))}
+-                  </ul>
++      <a
++        href={project.github}
++        target="_blank"
++        rel="noopener noreferrer"
++        onClick={(e) => e.stopPropagation()}
++        className="mt-2.5 inline-block border-b border-dashed border-primary text-xs text-primary"
++      >
++        View code →
++      </a>
++    </motion.div>
++  );
++};
+ 
+-                  {/* Actions */}
+-                  <div className="flex gap-3">
+-                    <Button
+-                      asChild
+-                      variant="outline"
+-                      size="sm"
+-                      className="flex-1"
+-                    >
+-                      <a
+-                        href={project.github}
+-                        target="_blank"
+-                        rel="noopener noreferrer"
+-                      >
+-                        <Github className="w-4 h-4 mr-2" />
+-                        Code
+-                      </a>
+-                    </Button>
++const Projects = () => {
++  return (
++    <section id="projects" className="border-t border-dashed border-line py-20">
++      <div className="container px-6">
++        <div className="seclabel">select a level</div>
++        <h2 className="mb-8 text-2xl font-extrabold text-foreground">Projects</h2>
+ 
+-                    {/* <Button size="sm" className="flex-1">
+-                      <ExternalLink className="w-4 h-4 mr-2" />
+-                      Demo 
+-                    </Button> */}
+-                  </div>
+-                </div>
+-              </motion.div>
+-            ))}
+-          </div>
+-        </motion.div>
++        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
++          {projects.map((project, index) => (
++            <ProjectCard key={project.title} project={project} index={index} />
++          ))}
++        </div>
+       </div>
+     </section>
+   );
+diff --git a/src/components/Skills.tsx b/src/components/Skills.tsx
+index b5181aa..65d90ea 100644
+--- a/src/components/Skills.tsx
++++ b/src/components/Skills.tsx
+@@ -1,70 +1,97 @@
++import { useEffect, useRef, useState } from "react";
+ import { motion } from "framer-motion";
+ 
+ const skillCategories = [
+   {
+     title: "Languages",
+-    skills: ["Java", "Python", "Ruby", "JavaScript", "TypeScript", "HTML", "CSS"],
++    skills: [
++      { name: "Java", lvl: 90 },
++      { name: "TypeScript", lvl: 85 },
++      { name: "JavaScript", lvl: 80 },
++      { name: "Python", lvl: 70 },
++    ],
+   },
+   {
+-    title: "Frameworks & Libraries",
+-    skills: ["React.js", "Next.js", "Node.js", "Express.js", "Spring Boot"],
++    title: "Frameworks & libraries",
++    skills: [
++      { name: "React.js / Next.js", lvl: 85 },
++      { name: "Node.js / Express", lvl: 75 },
++      { name: "Spring Boot", lvl: 70 },
++    ],
+   },
+   {
+-    title: "Databases",
+-    skills: ["MongoDB", "PostgreSQL", "MySQL"],
+-  },
+-  {
+-    title: "DevOps & Tools",
+-    skills: ["Docker", "Git", "GitHub", "CI/CD", "Linux", "REST APIs", "Nginx", "Postman", "Kubernetes"],
++    title: "DevOps & tools",
++    skills: [
++      { name: "Docker / Kubernetes", lvl: 75 },
++      { name: "Git / CI-CD", lvl: 80 },
++      { name: "Linux / Nginx", lvl: 65 },
++    ],
+   },
+ ];
+ 
++const SkillRow = ({ name, lvl }: { name: string; lvl: number }) => {
++  const ref = useRef<HTMLDivElement>(null);
++  const [filled, setFilled] = useState(false);
++
++  useEffect(() => {
++    const el = ref.current;
++    if (!el) return;
++    const observer = new IntersectionObserver(
++      (entries) => {
++        entries.forEach((entry) => {
++          if (entry.isIntersecting) {
++            setFilled(true);
++            observer.unobserve(entry.target);
++          }
++        });
++      },
++      { threshold: 0.4 }
++    );
++    observer.observe(el);
++    return () => observer.disconnect();
++  }, []);
++
++  return (
++    <div ref={ref} className="mb-3">
++      <div className="mb-1 flex justify-between text-[13px]">
++        <span>{name}</span>
++        <span className="text-primary">Lv.{lvl}</span>
++      </div>
++      <div className="h-2 overflow-hidden bg-line">
++        <div
++          className="h-full bg-primary transition-[width] ease-out"
++          style={{ width: filled ? `${lvl}%` : "0%", transitionDuration: "1100ms" }}
++        />
++      </div>
++    </div>
++  );
++};
++
+ const Skills = () => {
+   return (
+-    <section id="skills" className="py-24 relative bg-secondary/30">
++    <section id="skills" className="border-t border-dashed border-line py-20">
+       <div className="container px-6">
+-        <motion.div
+-          initial={{ opacity: 0, y: 20 }}
+-          whileInView={{ opacity: 1, y: 0 }}
+-          viewport={{ once: true }}
+-          transition={{ duration: 0.6 }}
+-        >
+-          <h2 className="section-heading text-center mb-4">
+-            Tech <span className="text-gradient">Stack</span>
+-          </h2>
+-          <p className="text-muted-foreground text-center text-lg mb-16 max-w-2xl mx-auto">
+-            Technologies and tools I work with to bring ideas to life
+-          </p>
++        <div className="seclabel">skill tree</div>
++        <h2 className="mb-8 text-2xl font-extrabold text-foreground">Skills</h2>
+ 
+-          <div className="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-8">
+-            {skillCategories.map((category, categoryIndex) => (
+-              <motion.div
+-                key={category.title}
+-                initial={{ opacity: 0, y: 20 }}
+-                whileInView={{ opacity: 1, y: 0 }}
+-                viewport={{ once: true }}
+-                transition={{ duration: 0.5, delay: categoryIndex * 0.1 }}
+-                className="card-gradient p-6 rounded-xl border border-border"
+-              >
+-                <h3 className="text-lg font-semibold mb-4 text-primary">{category.title}</h3>
+-                <div className="flex flex-wrap gap-2">
+-                  {category.skills.map((skill, skillIndex) => (
+-                    <motion.span
+-                      key={skill}
+-                      initial={{ opacity: 0, scale: 0.9 }}
+-                      whileInView={{ opacity: 1, scale: 1 }}
+-                      viewport={{ once: true }}
+-                      transition={{ duration: 0.3, delay: categoryIndex * 0.1 + skillIndex * 0.05 }}
+-                      className="px-3 py-1.5 rounded-full bg-secondary text-sm font-medium border border-border hover:border-primary/50 transition-colors cursor-default"
+-                    >
+-                      {skill}
+-                    </motion.span>
+-                  ))}
+-                </div>
+-              </motion.div>
+-            ))}
+-          </div>
+-        </motion.div>
++        <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
++          {skillCategories.map((category, categoryIndex) => (
++            <motion.div
++              key={category.title}
++              initial={{ opacity: 0, y: 15 }}
++              whileInView={{ opacity: 1, y: 0 }}
++              viewport={{ once: true }}
++              transition={{ duration: 0.4, delay: categoryIndex * 0.1 }}
++            >
++              <h3 className="mb-3.5 text-xs uppercase tracking-wider text-accent">
++                {category.title}
++              </h3>
++              {category.skills.map((skill) => (
++                <SkillRow key={skill.name} name={skill.name} lvl={skill.lvl} />
++              ))}
++            </motion.div>
++          ))}
++        </div>
+       </div>
+     </section>
+   );
+diff --git a/src/index.css b/src/index.css
+index 3808459..f17f34f 100644
+--- a/src/index.css
++++ b/src/index.css
+@@ -1,61 +1,63 @@
++@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700;800&display=swap');
++
+ @tailwind base;
+ @tailwind components;
+ @tailwind utilities;
+ 
+-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap');
+-
+ @layer base {
+   :root {
+-    --background: 222 47% 6%;
+-    --foreground: 210 40% 98%;
++    --background: 120 13% 5%;
++    --foreground: 132 23% 87%;
+ 
+-    --card: 222 47% 8%;
+-    --card-foreground: 210 40% 98%;
++    --card: 108 14% 7%;
++    --card-foreground: 132 23% 87%;
+ 
+-    --popover: 222 47% 8%;
+-    --popover-foreground: 210 40% 98%;
++    --popover: 108 14% 7%;
++    --popover-foreground: 132 23% 87%;
+ 
+-    --primary: 174 72% 56%;
+-    --primary-foreground: 222 47% 6%;
++    --primary: 139 100% 68%;
++    --primary-foreground: 120 40% 8%;
+ 
+-    --secondary: 222 30% 14%;
+-    --secondary-foreground: 210 40% 98%;
++    --secondary: 112 21% 14%;
++    --secondary-foreground: 132 23% 87%;
+ 
+-    --muted: 222 30% 14%;
+-    --muted-foreground: 215 20% 55%;
++    --muted: 112 21% 14%;
++    --muted-foreground: 131 7% 46%;
+ 
+-    --accent: 174 72% 56%;
+-    --accent-foreground: 222 47% 6%;
++    --accent: 34 100% 66%;
++    --accent-foreground: 120 40% 8%;
+ 
+-    --destructive: 0 84.2% 60.2%;
+-    --destructive-foreground: 210 40% 98%;
++    --destructive: 0 72% 55%;
++    --destructive-foreground: 132 23% 87%;
+ 
+-    --border: 222 30% 18%;
+-    --input: 222 30% 18%;
+-    --ring: 174 72% 56%;
++    --border: 112 21% 14%;
++    --input: 112 21% 14%;
++    --ring: 139 100% 68%;
+ 
+-    --radius: 0.75rem;
++    --radius: 0.25rem;
+ 
+-    /* Custom tokens */
+-    --gradient-primary: linear-gradient(135deg, hsl(174 72% 56%), hsl(190 80% 45%));
+-    --gradient-hero: linear-gradient(180deg, hsl(222 47% 8%) 0%, hsl(222 47% 6%) 100%);
+-    --gradient-card: linear-gradient(135deg, hsl(222 47% 10%) 0%, hsl(222 47% 8%) 100%);
+-    --glow-primary: 0 0 40px hsl(174 72% 56% / 0.3);
+-    --shadow-elevated: 0 25px 50px -12px hsl(0 0% 0% / 0.5);
++    /* Terminal tokens */
++    --green: 139 100% 68%;
++    --green-dim: 144 43% 29%;
++    --amber: 34 100% 66%;
++    --panel: 108 14% 7%;
++    --line: 112 21% 14%;
++    --glow-primary: 0 0 30px hsl(139 100% 68% / 0.25);
++    --gradient-primary: linear-gradient(135deg, hsl(139 100% 68%), hsl(144 60% 45%));
+ 
+-    --sidebar-background: 222 47% 8%;
+-    --sidebar-foreground: 210 40% 98%;
+-    --sidebar-primary: 174 72% 56%;
+-    --sidebar-primary-foreground: 222 47% 6%;
+-    --sidebar-accent: 222 30% 14%;
+-    --sidebar-accent-foreground: 210 40% 98%;
+-    --sidebar-border: 222 30% 18%;
+-    --sidebar-ring: 174 72% 56%;
++    --sidebar-background: 108 14% 7%;
++    --sidebar-foreground: 132 23% 87%;
++    --sidebar-primary: 139 100% 68%;
++    --sidebar-primary-foreground: 120 40% 8%;
++    --sidebar-accent: 112 21% 14%;
++    --sidebar-accent-foreground: 132 23% 87%;
++    --sidebar-border: 112 21% 14%;
++    --sidebar-ring: 139 100% 68%;
+   }
+ 
+   .dark {
+-    --background: 222 47% 6%;
+-    --foreground: 210 40% 98%;
++    --background: 120 13% 5%;
++    --foreground: 132 23% 87%;
+   }
+ }
+ 
+@@ -69,13 +71,32 @@
+   }
+ 
+   body {
+-    @apply bg-background text-foreground font-sans antialiased;
+-    font-family: 'Inter', sans-serif;
++    @apply bg-background text-foreground font-mono antialiased;
++    position: relative;
++    line-height: 1.6;
++  }
++
++  /* CRT scanline overlay */
++  body::before {
++    content: "";
++    position: fixed;
++    inset: 0;
++    pointer-events: none;
++    z-index: 50;
++    background: repeating-linear-gradient(
++      0deg,
++      rgba(0, 0, 0, 0.15) 0px,
++      rgba(0, 0, 0, 0.15) 1px,
++      transparent 1px,
++      transparent 3px
++    );
++    mix-blend-mode: overlay;
++    opacity: 0.5;
+   }
+ 
+   ::selection {
+-    background: hsl(var(--primary) / 0.3);
+-    color: hsl(var(--foreground));
++    background: hsl(var(--green));
++    color: hsl(var(--background));
+   }
+ }
+ 
+@@ -90,16 +111,39 @@
+   }
+ 
+   .card-gradient {
+-    background: var(--gradient-card);
++    background: hsl(var(--panel));
+   }
+ 
+   .section-heading {
+-    @apply text-3xl md:text-4xl font-bold tracking-tight;
++    @apply text-3xl md:text-4xl font-extrabold tracking-tight;
+   }
+ 
+   .code-font {
+     font-family: 'JetBrains Mono', monospace;
+   }
++
++  /* // section label */
++  .seclabel {
++    @apply text-primary text-xs tracking-[2px] mb-2 uppercase;
++  }
++  .seclabel::before {
++    content: "// ";
++  }
++
++  /* blinking terminal caret */
++  .caret {
++    display: inline-block;
++    width: 0.5em;
++    background: hsl(var(--green));
++    animation: blink 1s steps(1) infinite;
++    margin-left: 4px;
++  }
++
++  @keyframes blink {
++    50% {
++      opacity: 0;
++    }
++  }
+ }
+ 
+ @layer utilities {
+@@ -130,9 +174,26 @@
+   }
+ 
+   .bg-grid {
+-    background-image: 
++    background-image:
+       linear-gradient(to right, hsl(var(--border) / 0.3) 1px, transparent 1px),
+       linear-gradient(to bottom, hsl(var(--border) / 0.3) 1px, transparent 1px);
+     background-size: 60px 60px;
+   }
++
++  .dashed-border {
++    border-style: dashed;
++  }
++
++  .toast-enter {
++    animation: toast-in 0.4s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
++  }
++
++  @keyframes toast-in {
++    from {
++      transform: translateX(120%);
++    }
++    to {
++      transform: translateX(0);
++    }
++  }
+ }
+diff --git a/src/pages/Index.tsx b/src/pages/Index.tsx
+index 49b9457..880ee76 100644
+--- a/src/pages/Index.tsx
++++ b/src/pages/Index.tsx
+@@ -4,20 +4,20 @@ import About from "@/components/About";
+ import Skills from "@/components/Skills";
+ import Experience from "@/components/Experience";
+ import Projects from "@/components/Projects";
+-import Education from "@/components/Education";
+ import Contact from "@/components/Contact";
+ import Footer from "@/components/Footer";
++import AchievementToasts from "@/components/AchievementToasts";
+ 
+ const Index = () => {
+   return (
+     <div className="min-h-screen bg-background">
++      <AchievementToasts />
+       <Navbar />
+       <Hero />
+       <About />
+       <Skills />
+       <Experience />
+       <Projects />
+-      <Education />
+       <Contact />
+       <Footer />
+     </div>
+diff --git a/tailwind.config.ts b/tailwind.config.ts
+index b92889a..b80918b 100644
+--- a/tailwind.config.ts
++++ b/tailwind.config.ts
+@@ -43,6 +43,9 @@ export default {
+           DEFAULT: "hsl(var(--accent))",
+           foreground: "hsl(var(--accent-foreground))",
+         },
++        amber: "hsl(var(--amber))",
++        panel: "hsl(var(--panel))",
++        line: "hsl(var(--line))",
+         popover: {
+           DEFAULT: "hsl(var(--popover))",
+           foreground: "hsl(var(--popover-foreground))",

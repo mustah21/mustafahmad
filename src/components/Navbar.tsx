@@ -1,112 +1,77 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Menu, X } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import cv from "@/public/Resume.pdf";
-
 
 const navLinks = [
-  { name: "About", href: "#about" },
-  { name: "Skills", href: "#skills" },
-  { name: "Experience", href: "#experience" },
-  { name: "Projects", href: "#projects" },
-  { name: "Education", href: "#education" },
-  { name: "Contact", href: "#contact" },
+  { name: "about", href: "#about" },
+  { name: "skills", href: "#skills" },
+  { name: "quests", href: "#experience" },
+  { name: "levels", href: "#projects" },
+  { name: "contact", href: "#contact" },
 ];
 
 const Navbar = () => {
-  const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 50);
+    document.body.style.overflow = isMobileMenuOpen ? "hidden" : "";
+    return () => {
+      document.body.style.overflow = "";
     };
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
+  }, [isMobileMenuOpen]);
 
   return (
-    <motion.header
-      initial={{ y: -100 }}
-      animate={{ y: 0 }}
-      transition={{ duration: 0.5 }}
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${isScrolled
-        ? "bg-background/80 backdrop-blur-lg border-b border-border"
-        : "bg-transparent"
-        }`}
-    >
-      <nav className="container px-6 py-4 flex items-center justify-between">
-        {/* Logo */}
-        <a href="#" className="text-xl font-bold">
-          M<span className="text-primary">.</span>A
+    <nav className="sticky top-0 z-20 border-b border-line bg-background/90 backdrop-blur-sm">
+      <div className="container flex items-center justify-between px-6 py-3.5">
+        <a href="#" className="font-extrabold tracking-wider text-primary">
+          MA://
         </a>
 
-        {/* Desktop nav */}
-        <div className="hidden md:flex items-center gap-8">
+        <div className="hidden items-center gap-5 text-[13px] md:flex">
           {navLinks.map((link) => (
             <a
               key={link.name}
               href={link.href}
-              className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+              className="text-muted-foreground transition-colors hover:text-primary"
             >
               {link.name}
             </a>
           ))}
-          <Button size="sm" asChild>
-            <a href="#contact">Get in Touch</a>
-          </Button>
-          {/* <Button size="sm" asChild>
-            <a href="/Mustafa_Ahmad-Resume.pdf" download>Download CV</a>
-          </Button> */}
         </div>
 
-        {/* Mobile menu button */}
         <button
-          className="md:hidden p-2"
+          className="p-2 text-muted-foreground md:hidden"
           onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+          aria-label="Toggle menu"
         >
-          {isMobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+          {isMobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
         </button>
-      </nav>
+      </div>
 
-      {/* Mobile menu */}
       <AnimatePresence>
         {isMobileMenuOpen && (
           <motion.div
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: "auto" }}
             exit={{ opacity: 0, height: 0 }}
-            className="md:hidden bg-background/95 backdrop-blur-lg border-b border-border"
+            className="border-t border-line bg-background md:hidden"
           >
-            <div className="container px-6 py-4 flex flex-col gap-4">
+            <div className="container flex flex-col gap-1 px-6 py-4 text-[13px]">
               {navLinks.map((link) => (
                 <a
                   key={link.name}
                   href={link.href}
                   onClick={() => setIsMobileMenuOpen(false)}
-                  className="text-sm text-muted-foreground hover:text-foreground transition-colors py-2"
+                  className="py-2 text-muted-foreground transition-colors hover:text-primary"
                 >
                   {link.name}
                 </a>
               ))}
-              <Button size="sm" className="w-full" asChild>
-                <a href="#contact" onClick={() => setIsMobileMenuOpen(false)}>
-                  Get in Touch
-                </a>
-              </Button>
-
-              <Button size="sm" className="w-full" asChild>
-                <a href="/Mustafa_Ahmad-Resume.pdf" download onClick={() => setIsMobileMenuOpen(false)}>
-                  Download CV
-                </a>
-              </Button>
-            
             </div>
           </motion.div>
         )}
       </AnimatePresence>
-    </motion.header>
+    </nav>
   );
 };
 

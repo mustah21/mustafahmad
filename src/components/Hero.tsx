@@ -1,148 +1,95 @@
+import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { ArrowDown, Github, Linkedin, Mail, Phone } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import profileImage from "@/assets/profile.jpg";
-import profileImage2 from "@/assets/profile2.jpeg";
 
-
+const BOOT_LINES = [
+  "> booting portfolio.exe",
+  "> loading modules: react, typescript, tailwind",
+  "> connecting to github.com/mustah21 ... ok",
+  "> mounting sections: about, skills, quests, levels",
+  "> ready.",
+];
 
 const Hero = () => {
+  const [visibleLines, setVisibleLines] = useState(0);
+
+  useEffect(() => {
+    const timers = BOOT_LINES.map((_, i) =>
+      setTimeout(() => setVisibleLines((v) => Math.max(v, i + 1)), i * 220)
+    );
+    return () => timers.forEach(clearTimeout);
+  }, []);
+
   return (
-    <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
-      {/* Background grid — YOUR ORIGINAL */}
-      <div className="absolute inset-0 bg-grid-white/[0.02] bg-[size:50px_50px]" />
-
-      {/* Gradient orb — YOUR ORIGINAL */}
-      <div className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-purple-500/20 rounded-full blur-3xl" />
-
-      {/* Main content — side by side */}
-      <div className="relative z-10 max-w-6xl mx-auto px-6 flex flex-col md:flex-row items-center gap-12 md:gap-20">
-
-        {/* ── LEFT: Image ── */}
-        <motion.div
-          initial={{ opacity: 0, x: -40 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.6 }}
-          className="relative flex-shrink-0"
-        >
-
-          <div className="absolute inset-0 rounded-full border-2 border-purple-500/30 scale-110" />
-
-          <img
-            src={profileImage2}
-            alt="Mustafa Ahmad"
-            className="w-56 h-56 md:w-72 md:h-72 rounded-full object-cover border-4 border-purple-500/40 shadow-xl shadow-purple-500/20"
-          />
-
-
-          {/* <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.4 }}
-            className="absolute -bottom-3 left-1/2 -translate-x-1/2 flex items-center gap-2 bg-background/80 backdrop-blur border border-purple-500/30 rounded-full px-4 py-1.5 text-sm whitespace-nowrap shadow-lg"
-          >
-            <span className="w-2 h-2 rounded-full bg-green-400 animate-pulse" />
-            Available for opportunities
-          </motion.div> */}
-
-        </motion.div>
+    <header className="relative flex min-h-screen flex-col justify-center">
+      <div className="container px-6">
+        <div className="mb-6">
+          {BOOT_LINES.map((line, i) => (
+            <div
+              key={line}
+              className="text-[13px] whitespace-pre transition-opacity duration-300"
+              style={{
+                color: "hsl(var(--green-dim))",
+                opacity: i < visibleLines ? 1 : 0,
+              }}
+            >
+              {line}
+            </div>
+          ))}
+        </div>
 
         <motion.div
-          initial={{ opacity: 0, x: 40 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.6 }}
-          className="flex flex-col items-start text-left"
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: BOOT_LINES.length * 0.22, duration: 0.5 }}
         >
-          <h1 className="text-4xl md:text-6xl font-bold tracking-tight mb-2">
+          <div className="mb-1.5 text-[13px] text-muted-foreground">$ whoami</div>
+          <h1 className="my-1.5 text-[clamp(32px,6vw,58px)] font-extrabold text-foreground">
             Mustafa Ahmad
+            <span className="caret">&nbsp;</span>
           </h1>
-
-          <p className="text-xl md:text-2xl text-purple-400 font-medium mb-4">
-            Software Engineer
+          <div className="mb-3.5 text-lg text-primary">&gt; Software Engineer</div>
+          <p className="mb-6 max-w-[520px] text-sm text-muted-foreground">
+            Full-stack developer building scalable applications end to end — from network
+            infrastructure up through APIs to the UI. Currently levelling up in Helsinki, Finland.
           </p>
 
-          <p className="text-muted-foreground text-base md:text-lg max-w-md mb-8 leading-relaxed">
-            Full stack developer passionate about building scalable applications
-            and crafting exceptional user experiences.
-          </p>
-
-          <div className="flex flex-wrap gap-4 mb-8">
-            <Button size="lg" >
-              <a href="#contact">Get in Touch</a>    
-
-              {/* wow crazy */}
-
-            </Button>
-            {/* <Button size="lg" variant="outline">
-              <a href="#projects">View Projects</a>
-            </Button> */}
-
-            <Button size="lg" variant="outline">
-              <a href="/Mustafa_Ahmad-Resume.pdf" download>Download CV</a>
-            </Button>
-
+          <div className="mb-6 flex flex-wrap gap-3.5">
+            <a
+              href="#contact"
+              className="border px-[18px] py-2.5 text-[13px] text-primary transition-colors hover:bg-primary hover:text-background"
+              style={{ borderColor: "hsl(var(--green-dim))" }}
+            >
+              Get in touch
+            </a>
+            <a
+              href="/Mustafa_Ahmad-Resume.pdf"
+              download
+              className="border border-line px-[18px] py-2.5 text-[13px] text-muted-foreground transition-colors hover:border-muted-foreground hover:text-foreground"
+            >
+              Download CV
+            </a>
           </div>
 
-
-<motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.5 }}
-            className="flex items-center gap-6"
-          >
+          <div className="flex flex-wrap gap-4 text-[13px]">
             {[
-              { icon: Github, label: "GitHub", href: "https://github.com/mustah21/" },
-              { icon: Linkedin, label: "LinkedIn", href: "https://www.linkedin.com/in/mustafa-ahmad-002063332/" },
-              { icon: Mail, label: "Email", href: "mailto:mustafa.ahmad@metropolia.fi" },
-            ].map((social, index) => (
-              <motion.a
+              { label: "GitHub", href: "https://github.com/mustah21/" },
+              { label: "LinkedIn", href: "https://www.linkedin.com/in/mustafa-ahmad-002063332/" },
+              { label: "Email", href: "mailto:mustafa.ahmad@metropolia.fi" },
+            ].map((social) => (
+              <a
                 key={social.label}
                 href={social.href}
-                whileHover={{ scale: 1.2, rotate: 5 }}
-                whileTap={{ scale: 0.95 }}
-                className="relative group"
+                target={social.label !== "Email" ? "_blank" : undefined}
+                rel="noopener noreferrer"
+                className="border-b border-dashed border-line text-muted-foreground transition-colors hover:border-primary hover:text-primary"
               >
-                <div className="absolute inset-0 bg-gradient-to-r from-cyan-500 to-blue-500 rounded-lg blur opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                <div className="relative bg-background p-3 rounded-lg border border-white/10 group-hover:border-white/30 transition-all">
-                  <social.icon className="h-5 w-5 text-cyan-400 group-hover:text-cyan-300" />
-                </div>
-              </motion.a>
+                {social.label}
+              </a>
             ))}
-          </motion.div>
-
-
-
-
-
-
-
-
-          {/* <div className="flex items-center gap-4">
-            <a href="#" className="text-muted-foreground hover:text-foreground transition-colors">
-              <Github className="h-5 w-5" />
-            </a>
-            <a href="#" className="text-muted-foreground hover:text-foreground transition-colors">
-              <Linkedin className="h-5 w-5" />
-            </a>
-            <a href="#" className="text-muted-foreground hover:text-foreground transition-colors">
-              <Phone className="h-5 w-5" />
-            </a>
-          </div> */}
-
+          </div>
         </motion.div>
       </div>
-
-
-      <motion.div
-        animate={{ y: [0, 8, 0] }}
-        transition={{ repeat: Infinity, duration: 1.5 }}
-        className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-1 text-muted-foreground text-sm"
-      >
-        <span>Scroll down</span>
-        <ArrowDown className="h-4 w-4" />
-      </motion.div>
-    </section>
-
+    </header>
   );
 };
 

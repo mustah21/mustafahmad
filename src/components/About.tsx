@@ -1,67 +1,42 @@
 import { motion } from "framer-motion";
-import { Code2, Server, GitBranch, Globe } from "lucide-react";
 
-const highlights = [
-  {
-    icon: Code2,
-    title: "Frontend",
-    description: "React, Next.js, TypeScript",
-  },
-  {
-    icon: Server,
-    title: "Backend",
-    description: "Node.js, Java, Spring Boot, REST APIs",
-  },
-  {
-    icon: GitBranch,
-    title: "DevOps",
-    description: "Docker, CI/CD, Jenkins, kubernetes",
-  },
-  {
-    icon: Globe,
-    title: "Databases",
-    description: "PostgreSQL, MongoDB, MySQL",
-  },
+const stats = [
+  { k: "Frontend", v: "React, Next.js, TypeScript" },
+  { k: "Backend", v: "Node.js, Java, Spring Boot, REST APIs" },
+  { k: "DevOps", v: "Docker, CI/CD, Jenkins, Kubernetes" },
+  { k: "Databases", v: "PostgreSQL, MongoDB, MySQL" },
+  { k: "Languages", v: "English, Urdu, Hindi, Finnish (basic)" },
 ];
 
 const About = () => {
   return (
-    <section id="about" className="py-24 relative">
+    <section id="about" className="border-t border-dashed border-line py-20">
       <div className="container px-6">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
-          className="max-w-4xl mx-auto"
-        >
-          <h2 className="section-heading text-center mb-4">
-            About <span className="text-gradient">Me</span>
-          </h2>
-          <p className="text-muted-foreground text-center text-lg mb-16 max-w-2xl mx-auto">
-              Specializing in the complete software lifecycle. 
-              I design full-stack applications, architect network solutions, and automate deployments through containerization and CI/CD turning complex technical challenges into elegant, maintainable systems.
-          </p>
+        <div className="seclabel">character sheet</div>
+        <h2 className="mb-8 text-2xl font-extrabold text-foreground">About</h2>
+        <p className="mb-8 max-w-2xl text-sm text-muted-foreground">
+          Specializes in the complete software lifecycle — designs full-stack applications,
+          architects network solutions, and automates deployments through containerization and
+          CI/CD.
+        </p>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {highlights.map((item, index) => (
-              <motion.div
-                key={item.title}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: index * 0.1 }}
-                className="card-gradient p-6 rounded-xl border border-border hover:border-primary/30 transition-all duration-300 group"
-              >
-                <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center mb-4 group-hover:bg-primary/20 transition-colors">
-                  <item.icon className="w-6 h-6 text-primary" />
-                </div>
-                <h3 className="text-lg font-semibold mb-2">{item.title}</h3>
-                <p className="text-muted-foreground text-sm">{item.description}</p>
-              </motion.div>
-            ))}
-          </div>
-        </motion.div>
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {stats.map((stat, index) => (
+            <motion.div
+              key={stat.k}
+              initial={{ opacity: 0, y: 15 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.4, delay: index * 0.08 }}
+              className="border border-line bg-card p-4"
+            >
+              <div className="mb-2 text-xs uppercase tracking-wider text-muted-foreground">
+                {stat.k}
+              </div>
+              <div className="text-sm text-foreground">{stat.v}</div>
+            </motion.div>
+          ))}
+        </div>
       </div>
     </section>
   );
