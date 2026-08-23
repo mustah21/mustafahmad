@@ -24,9 +24,9 @@ const AboutWindow = () => {
       </div>
 
       <p className="mb-5 leading-relaxed text-muted-foreground">
-        Full-stack developer building scalable applications end to end — from network
+        Full-stack developer building scalable applications end to end. From network
         infrastructure up through APIs to the UI. Specializes in the complete software
-        lifecycle: designing full-stack applications, architecting network solutions, and
+        lifecycle: designing applications, architecting network solutions, and
         automating deployments through containerization and CI/CD.
       </p>
 

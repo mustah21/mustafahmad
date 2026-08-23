@@ -6,7 +6,7 @@ const HomeWindow = ({ onOpen }: { onOpen: (id: string) => void }) => {
       <div className="mb-1 text-xs uppercase tracking-wider text-primary">Welcome to MA/OS</div>
       <h2 className="mb-3 text-2xl font-bold tracking-tight">Hi, I'm Mustafa Ahmad.</h2>
       <p className="mb-5 leading-relaxed text-muted-foreground">
-        Software engineer based in Helsinki, Finland. This site is set up like a little desktop —
+        Software engineer based in Helsinki, Finland. This site is set up like a little desktop,
         open the apps in the dock below, or the icons here, to look around.
       </p>
 
