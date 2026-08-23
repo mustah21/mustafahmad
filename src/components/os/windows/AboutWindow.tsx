@@ -2,8 +2,8 @@ import profileImage from "@/assets/profile-mustafa.jpg";
 
 const stats = [
   { k: "Frontend", v: "React, Next.js, TypeScript" },
-  { k: "Backend", v: "Node.js, Java, Spring Boot, REST APIs" },
-  { k: "DevOps", v: "Docker, CI/CD, Jenkins, Kubernetes" },
+  { k: "Backend", v: "Node.js, Java, Kotlin, Swift,  Spring Boot, REST APIs" },
+  { k: "DevOps", v: "Docker, Jenkins, Github Actions, Kubernetes" },
   { k: "Databases", v: "PostgreSQL, MongoDB, MySQL" },
   { k: "Languages", v: "English, Urdu, Hindi, Finnish (basic)" },
 ];

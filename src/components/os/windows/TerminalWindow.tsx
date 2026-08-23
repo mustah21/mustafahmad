@@ -1,25 +1,74 @@
 import { useState, useRef, useEffect, FormEvent } from "react";
 
-const HELP = `Available commands: help, whoami, about, skills, contact, clear`;
+interface Command {
+  description: string;
+  run: (args: string[]) => string;
+}
 
-const respond = (cmdRaw: string): string => {
-  const cmd = cmdRaw.trim().toLowerCase();
-  switch (cmd) {
-    case "help":
-      return HELP;
-    case "whoami":
-      return "mustafa-ahmad — software engineer, Helsinki FI";
-    case "about":
-      return "Full-stack developer. React/TypeScript, Java/Spring Boot, Docker & CI/CD.";
-    case "skills":
-      return "Java, TypeScript, React, Node.js, Spring Boot, Docker, Kubernetes, Postgres.";
-    case "contact":
-      return "mustafa.ahmad@metropolia.fi · github.com/mustah21";
-    case "":
-      return "";
-    default:
-      return `command not found: ${cmd} (try "help")`;
-  }
+// Single source of truth: add a command here and it automatically
+// shows up in "help" too.
+const COMMANDS: Record<string, Command> = {
+  help: {
+    description: "list available commands",
+    run: () =>
+      "Available commands:\n" +
+      Object.entries(COMMANDS)
+        .map(([name, c]) => `  ${name.padEnd(10)} ${c.description}`)
+        .join("\n"),
+  },
+  whoami: {
+    description: "who am i",
+    run: () => "mustafa-ahmad — software engineer, Helsinki FI",
+  },
+  about: {
+    description: "short bio",
+    run: () => "Full-stack developer. React/TypeScript, Java/Spring Boot, Docker & CI/CD.",
+  },
+  skills: {
+    description: "tech stack",
+    run: () => "Java, TypeScript, Kotlin, React, Node.js, Spring Boot, Docker, Kubernetes, Postgres.",
+  },
+  contact: {
+    description: "how to reach me",
+    run: () => "mustafa.ahmad@metropolia.fi · github.com/mustah21",
+  },
+  education: {
+    description: "education background",
+    run: () => "Metropolia University of Applied Sciences — B.Eng, Information Technology.",
+  },
+  socials: {
+    description: "social links",
+    run: () => "github.com/mustah21 · linkedin.com/in/mustafa-ahmad",
+  },
+  date: {
+    description: "current date/time",
+    run: () => new Date().toLocaleString(),
+  },
+  echo: {
+    description: "echo back text",
+    run: (args) => args.join(" "),
+  },
+  clear: {
+    description: "clear the terminal",
+    run: () => "__CLEAR__",
+  },
+  sudo: {
+    description: "Superuser do",
+    run: () => "nice try",
+  },
+};
+
+const respond = (raw: string): string => {
+  const trimmed = raw.trim();
+  if (!trimmed) return "";
+
+  const [cmdRaw, ...args] = trimmed.split(/\s+/);
+  const cmd = cmdRaw.toLowerCase();
+
+  const command = COMMANDS[cmd];
+  if (!command) return `command not found: ${cmd} (try "help")`;
+
+  return command.run(args);
 };
 
 const TerminalWindow = () => {
@@ -36,11 +85,11 @@ const TerminalWindow = () => {
 
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
-    const cmd = input.trim().toLowerCase();
-    if (cmd === "clear") {
+    const output = respond(input);
+
+    if (output === "__CLEAR__") {
       setLines([]);
     } else {
-      const output = respond(cmd);
       setLines((prev) => [...prev, `$ ${input}`, ...(output ? [output] : [])]);
     }
     setInput("");
@@ -50,7 +99,7 @@ const TerminalWindow = () => {
     <div className="font-mono text-xs">
       <div className="mb-2 max-h-64 space-y-1 overflow-y-auto text-muted-foreground">
         {lines.map((line, i) => (
-          <div key={i} className={line.startsWith("$") ? "text-foreground" : ""}>
+          <div key={i} className={`whitespace-pre-wrap ${line.startsWith("$") ? "text-foreground" : ""}`}>
             {line}
           </div>
         ))}

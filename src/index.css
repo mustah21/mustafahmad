@@ -106,7 +106,7 @@
   }
 
   .traffic-dot {
-    @apply h-3 w-3 rounded-full transition-opacity;
+    @apply h-6 w-6 rounded-full transition-opacity;
   }
 }
 

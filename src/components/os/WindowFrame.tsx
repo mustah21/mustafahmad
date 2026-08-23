@@ -31,6 +31,7 @@ const WindowFrame = ({
   const dragRef = useRef<{ startX: number; startY: number; origX: number; origY: number } | null>(
     null
   );
+
   const [dragging, setDragging] = useState(false);
 
   const handlePointerDown = useCallback(
@@ -82,7 +83,7 @@ const WindowFrame = ({
               e.stopPropagation();
               onClose();
             }}
-            className="traffic-dot bg-[#ff5f57] hover:opacity-80"
+            className="traffic-dot bg-[#ff5f57] hover:opacity-25"
             aria-label="Close window"
           />
           <button
@@ -90,10 +91,8 @@ const WindowFrame = ({
               e.stopPropagation();
               onMinimize();
             }}
-            className="traffic-dot bg-[#febc2e] hover:opacity-80"
             aria-label="Minimize window"
           />
-          <div className="traffic-dot bg-[#28c840] opacity-40" />
         </div>
         <div className="ml-2 flex items-center gap-1.5 text-xs font-medium text-muted-foreground">
           {icon}
