@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Bell } from "lucide-react";
 
-const menuItems = ["File", "Edit", "View", "Window", "Help"];
+const menuItems = [];
 
 const MenuBar = ({ onBellClick }: { onBellClick: () => void }) => {
   const [now, setNow] = useState(new Date());
