@@ -62,12 +62,22 @@
 
   html {
     scroll-behavior: smooth;
+    height: 100%;
+    overflow: hidden;
+  }
+
+  #root {
+    height: 100%;
+    overflow: hidden;
   }
 
   body {
     @apply bg-background text-foreground font-sans antialiased;
     overflow: hidden;
-    height: 100vh;
+    height: 100%;
+    width: 100%;
+    position: fixed;
+    inset: 0;
     background:
       radial-gradient(circle at 20% 15%, hsl(var(--accent) / 0.08), transparent 40%),
       radial-gradient(circle at 85% 80%, hsl(var(--accent) / 0.05), transparent 45%),

@@ -1,0 +1,253 @@
+diff --git a/src/components/os/BootSequence.tsx b/src/components/os/BootSequence.tsx
+deleted file mode 100644
+index 9b3b3d1..0000000
+--- a/src/components/os/BootSequence.tsx
++++ /dev/null
+@@ -1,49 +0,0 @@
+-import { useEffect, useState } from "react";
+-
+-const STEPS = [
+-  "Starting MA/OS",
+-  "Loading profile",
+-  "Mounting experience.log",
+-  "Indexing projects",
+-  "Ready",
+-];
+-
+-const BootSequence = ({ onDone }: { onDone: () => void }) => {
+-  const [progress, setProgress] = useState(0);
+-  const [stepIndex, setStepIndex] = useState(0);
+-
+-  useEffect(() => {
+-    const start = Date.now();
+-    const duration = 1900;
+-    const frame = () => {
+-      const elapsed = Date.now() - start;
+-      const pct = Math.min(100, (elapsed / duration) * 100);
+-      setProgress(pct);
+-      setStepIndex(Math.min(STEPS.length - 1, Math.floor((pct / 100) * STEPS.length)));
+-      if (pct < 100) {
+-        requestAnimationFrame(frame);
+-      } else {
+-        setTimeout(onDone, 300);
+-      }
+-    };
+-    const raf = requestAnimationFrame(frame);
+-    return () => cancelAnimationFrame(raf);
+-  }, [onDone]);
+-
+-  return (
+-    <div className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-background">
+-      <div className="mb-8 flex h-16 w-16 items-center justify-center rounded-2xl border border-white/10 bg-white/5 text-xl font-bold tracking-tight">
+-        MA
+-      </div>
+-      <div className="h-1 w-56 overflow-hidden rounded-full bg-white/10">
+-        <div
+-          className="h-full rounded-full bg-primary transition-[width] duration-100 ease-linear"
+-          style={{ width: `${progress}%` }}
+-        />
+-      </div>
+-      <div className="mt-4 text-xs text-muted-foreground">{STEPS[stepIndex]}…</div>
+-    </div>
+-  );
+-};
+-
+-export default BootSequence;
+diff --git a/src/components/os/OS.tsx b/src/components/os/OS.tsx
+index 8a1e80f..5f01a46 100644
+--- a/src/components/os/OS.tsx
++++ b/src/components/os/OS.tsx
+@@ -1,8 +1,7 @@
+-import { useState } from "react";
++import { useEffect, useState } from "react";
+ import { User, Briefcase, FolderOpen, Mail, TerminalSquare, Home } from "lucide-react";
+-import BootSequence from "./BootSequence";
+ import MenuBar from "./MenuBar";
+-import Dock, { dockItems } from "./Dock";
++import Dock from "./Dock";
+ import WindowFrame from "./WindowFrame";
+ import Notification from "./Notification";
+ import { useWindowManager } from "./useWindowManager";
+@@ -15,7 +14,7 @@ import SkillsWindow from "./windows/SkillsWindow";
+ import TerminalWindow from "./windows/TerminalWindow";
+ 
+ const windowMeta: Record<string, { title: string; icon: JSX.Element; width?: number }> = {
+-  home: { title: "Home", icon: <Home className="h-3.5 w-3.5" />, width: 460 },
++  home: { title: "Home", icon: <Home className="h-3.5 w-3.5" />, width: 640 },
+   about: { title: "About me", icon: <User className="h-3.5 w-3.5" />, width: 460 },
+   experience: { title: "Experience", icon: <Briefcase className="h-3.5 w-3.5" />, width: 460 },
+   projects: { title: "Projects", icon: <FolderOpen className="h-3.5 w-3.5" />, width: 440 },
+@@ -24,22 +23,34 @@ const windowMeta: Record<string, { title: string; icon: JSX.Element; width?: num
+   terminal: { title: "Terminal", icon: <TerminalSquare className="h-3.5 w-3.5" />, width: 440 },
+ };
+ 
+-const cascadeBase = { x: 120, y: 70 };
++// menu bar height, used to keep windows clear of it
++const MENU_BAR_HEIGHT = 36;
++
++const getCenteredPosition = (width: number, heightGuess = 460) => {
++  const vw = window.innerWidth;
++  const vh = window.innerHeight;
++  const x = Math.max(16, Math.round((vw - width) / 2));
++  const y = Math.max(MENU_BAR_HEIGHT + 12, Math.round((vh - heightGuess) / 2));
++  return { x, y };
++};
++
++const cascadeBase = { x: 160, y: 96 };
+ const cascadeStep = 32;
+ let cascadeCount = 0;
+ 
+ const OS = () => {
+-  const [booted, setBooted] = useState(false);
+   const [showWelcome, setShowWelcome] = useState(false);
+   const [showBell, setShowBell] = useState(false);
+   const { windows, openWindow, closeWindow, focusWindow, minimizeWindow, moveWindow } =
+     useWindowManager();
+ 
+-  const handleBootDone = () => {
+-    setBooted(true);
+-    openWindow("home", cascadeBase);
+-    setTimeout(() => setShowWelcome(true), 500);
+-  };
++  // open straight to the desktop, home window centered and larger by default
++  useEffect(() => {
++    openWindow("home", getCenteredPosition(windowMeta.home.width ?? 640, 480));
++    const t = setTimeout(() => setShowWelcome(true), 400);
++    return () => clearTimeout(t);
++    // eslint-disable-next-line react-hooks/exhaustive-deps
++  }, []);
+ 
+   const launch = (id: string) => {
+     if (!windowMeta[id]) return;
+@@ -54,59 +65,53 @@ const OS = () => {
+ 
+   return (
+     <div className="relative h-screen w-screen overflow-hidden">
+-      {!booted && <BootSequence onDone={handleBootDone} />}
++      <MenuBar onBellClick={() => setShowBell((v) => !v)} />
+ 
+-      {booted && (
+-        <>
+-          <MenuBar onBellClick={() => setShowBell((v) => !v)} />
+-
+-          {showWelcome && (
+-            <Notification
+-              title="Welcome to MA/OS"
+-              body="A different way to explore my profile — open the apps in the dock to look around."
+-              onDismiss={() => setShowWelcome(false)}
+-            />
+-          )}
+-          {showBell && (
+-            <Notification
+-              title="Notifications"
+-              body="You're all caught up. Try the Terminal app for a little easter egg."
+-              onDismiss={() => setShowBell(false)}
+-            />
+-          )}
++      {showWelcome && (
++        <Notification
++          title="Welcome to MA/OS"
++          body="A different way to explore my profile — open the apps in the dock to look around."
++          onDismiss={() => setShowWelcome(false)}
++        />
++      )}
++      {showBell && (
++        <Notification
++          title="Notifications"
++          body="You're all caught up. Try the Terminal app for a little easter egg."
++          onDismiss={() => setShowBell(false)}
++        />
++      )}
+ 
+-          {Object.values(windows).map((win) => {
+-            if (win.minimized) return null;
+-            const meta = windowMeta[win.id];
+-            if (!meta) return null;
+-            return (
+-              <WindowFrame
+-                key={win.id}
+-                title={meta.title}
+-                icon={meta.icon}
+-                x={win.x}
+-                y={win.y}
+-                z={win.z}
+-                width={meta.width}
+-                onClose={() => closeWindow(win.id)}
+-                onMinimize={() => minimizeWindow(win.id)}
+-                onFocus={() => focusWindow(win.id)}
+-                onMove={(x, y) => moveWindow(win.id, x, y)}
+-              >
+-                {win.id === "home" && <HomeWindow onOpen={launch} />}
+-                {win.id === "about" && <AboutWindow />}
+-                {win.id === "experience" && <ExperienceWindow />}
+-                {win.id === "projects" && <ProjectsWindow />}
+-                {win.id === "skills" && <SkillsWindow />}
+-                {win.id === "contact" && <ContactWindow />}
+-                {win.id === "terminal" && <TerminalWindow />}
+-              </WindowFrame>
+-            );
+-          })}
++      {Object.values(windows).map((win) => {
++        if (win.minimized) return null;
++        const meta = windowMeta[win.id];
++        if (!meta) return null;
++        return (
++          <WindowFrame
++            key={win.id}
++            title={meta.title}
++            icon={meta.icon}
++            x={win.x}
++            y={win.y}
++            z={win.z}
++            width={meta.width}
++            onClose={() => closeWindow(win.id)}
++            onMinimize={() => minimizeWindow(win.id)}
++            onFocus={() => focusWindow(win.id)}
++            onMove={(x, y) => moveWindow(win.id, x, y)}
++          >
++            {win.id === "home" && <HomeWindow onOpen={launch} />}
++            {win.id === "about" && <AboutWindow />}
++            {win.id === "experience" && <ExperienceWindow />}
++            {win.id === "projects" && <ProjectsWindow />}
++            {win.id === "skills" && <SkillsWindow />}
++            {win.id === "contact" && <ContactWindow />}
++            {win.id === "terminal" && <TerminalWindow />}
++          </WindowFrame>
++        );
++      })}
+ 
+-          <Dock openIds={openIds} onLaunch={launch} />
+-        </>
+-      )}
++      <Dock openIds={openIds} onLaunch={launch} />
+     </div>
+   );
+ };
+diff --git a/src/index.css b/src/index.css
+index cb1bbf6..4cb5a51 100644
+--- a/src/index.css
++++ b/src/index.css
+@@ -62,12 +62,22 @@
+ 
+   html {
+     scroll-behavior: smooth;
++    height: 100%;
++    overflow: hidden;
++  }
++
++  #root {
++    height: 100%;
++    overflow: hidden;
+   }
+ 
+   body {
+     @apply bg-background text-foreground font-sans antialiased;
+     overflow: hidden;
+-    height: 100vh;
++    height: 100%;
++    width: 100%;
++    position: fixed;
++    inset: 0;
+     background:
+       radial-gradient(circle at 20% 15%, hsl(var(--accent) / 0.08), transparent 40%),
+       radial-gradient(circle at 85% 80%, hsl(var(--accent) / 0.05), transparent 45%),
