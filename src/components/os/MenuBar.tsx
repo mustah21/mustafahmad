@@ -34,7 +34,7 @@ const MenuBar = ({ onBellClick }: { onBellClick: () => void }) => {
         >
           <Bell className="h-4 w-4" />
         </button>
-        <span className="text-muted-foreground">{date}</span>
+        <span className="hidden text-muted-foreground sm:inline">{date}</span>
         <span className="tabular-nums">{time}</span>
       </div>
     </div>

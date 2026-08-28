@@ -5,6 +5,7 @@ import Dock from "./Dock";
 import WindowFrame from "./WindowFrame";
 import Notification from "./Notification";
 import { useWindowManager } from "./useWindowManager";
+import { useIsMobile } from "@/hooks/use-mobile";
 import HomeWindow from "./windows/HomeWindow";
 import AboutWindow from "./windows/AboutWindow";
 import ExperienceWindow from "./windows/ExperienceWindow";
@@ -39,6 +40,7 @@ const cascadeStep = 32;
 let cascadeCount = 0;
 
 const OS = () => {
+  const isMobile = useIsMobile();
   const [showWelcome, setShowWelcome] = useState(false);
   const [showBell, setShowBell] = useState(false);
   const { windows, openWindow, closeWindow, focusWindow, minimizeWindow, moveWindow } =
@@ -54,6 +56,8 @@ const OS = () => {
 
   const launch = (id: string) => {
     if (!windowMeta[id]) return;
+    // on mobile, apps are full-screen and swapped one at a time rather than
+    // stacked — jumping straight to an existing one just re-focuses it
     cascadeCount = (cascadeCount + 1) % 6;
     openWindow(id, {
       x: cascadeBase.x + cascadeCount * cascadeStep,
@@ -61,7 +65,24 @@ const OS = () => {
     });
   };
 
-  const openIds = Object.keys(windows).filter((id) => !windows[id].minimized);
+  const openWindowList = Object.values(windows).filter((w) => !w.minimized);
+  const openIds = openWindowList.map((w) => w.id);
+
+  // on mobile only the top (most recently focused) window is actually
+  // rendered full-screen — the rest stay "open" in state so the dock's
+  // active-dot indicator and minimize/close behavior keep working
+  const topMobileWindow = isMobile
+    ? openWindowList.reduce<typeof openWindowList[number] | null>(
+        (top, w) => (!top || w.z > top.z ? w : top),
+        null
+      )
+    : null;
+
+  const visibleWindows = isMobile
+    ? topMobileWindow
+      ? [topMobileWindow]
+      : []
+    : openWindowList;
 
   return (
     <div className="relative h-screen w-screen overflow-hidden">
@@ -82,8 +103,7 @@ const OS = () => {
         />
       )}
 
-      {Object.values(windows).map((win) => {
-        if (win.minimized) return null;
+      {visibleWindows.map((win) => {
         const meta = windowMeta[win.id];
         if (!meta) return null;
         return (
@@ -95,6 +115,7 @@ const OS = () => {
             y={win.y}
             z={win.z}
             width={meta.width}
+            isMobile={isMobile}
             onClose={() => closeWindow(win.id)}
             onMinimize={() => minimizeWindow(win.id)}
             onFocus={() => focusWindow(win.id)}
@@ -111,7 +132,7 @@ const OS = () => {
         );
       })}
 
-      <Dock openIds={openIds} onLaunch={launch} />
+      <Dock openIds={openIds} onLaunch={launch} isMobile={isMobile} />
     </div>
   );
 };

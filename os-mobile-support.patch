@@ -1,0 +1,241 @@
+diff --git a/src/components/os/Dock.tsx b/src/components/os/Dock.tsx
+index 6d1613b..a6d55ca 100644
+--- a/src/components/os/Dock.tsx
++++ b/src/components/os/Dock.tsx
+@@ -19,10 +19,36 @@ export const dockItems: DockItem[] = [
+ const Dock = ({
+   openIds,
+   onLaunch,
++  isMobile = false,
+ }: {
+   openIds: string[];
+   onLaunch: (id: string) => void;
++  isMobile?: boolean;
+ }) => {
++  if (isMobile) {
++    // full-width bottom tab bar — no hover tooltips (they don't work on touch),
++    // bigger tap targets, always-visible labels instead
++    return (
++      <div className="no-select glass-panel fixed inset-x-0 bottom-0 z-40 flex items-stretch justify-around border-t border-white/5 px-1 pb-[env(safe-area-inset-bottom)]">
++        {dockItems.map((item) => {
++          const active = openIds.includes(item.id);
++          return (
++            <button
++              key={item.id}
++              onClick={() => onLaunch(item.id)}
++              className={`flex flex-1 flex-col items-center gap-0.5 py-2.5 text-[10px] transition-colors ${
++                active ? "text-primary" : "text-muted-foreground"
++              }`}
++            >
++              {item.icon}
++              <span className="leading-none">{item.label}</span>
++            </button>
++          );
++        })}
++      </div>
++    );
++  }
++
+   return (
+     <div className="no-select fixed bottom-4 left-1/2 z-40 -translate-x-1/2">
+       <div className="glass-panel flex items-end gap-1.5 rounded-2xl px-3 py-2.5 shadow-2xl">
+diff --git a/src/components/os/MenuBar.tsx b/src/components/os/MenuBar.tsx
+index 98cef06..5e5a41f 100644
+--- a/src/components/os/MenuBar.tsx
++++ b/src/components/os/MenuBar.tsx
+@@ -34,7 +34,7 @@ const MenuBar = ({ onBellClick }: { onBellClick: () => void }) => {
+         >
+           <Bell className="h-4 w-4" />
+         </button>
+-        <span className="text-muted-foreground">{date}</span>
++        <span className="hidden text-muted-foreground sm:inline">{date}</span>
+         <span className="tabular-nums">{time}</span>
+       </div>
+     </div>
+diff --git a/src/components/os/OS.tsx b/src/components/os/OS.tsx
+index 5f01a46..9ebe697 100644
+--- a/src/components/os/OS.tsx
++++ b/src/components/os/OS.tsx
+@@ -5,6 +5,7 @@ import Dock from "./Dock";
+ import WindowFrame from "./WindowFrame";
+ import Notification from "./Notification";
+ import { useWindowManager } from "./useWindowManager";
++import { useIsMobile } from "@/hooks/use-mobile";
+ import HomeWindow from "./windows/HomeWindow";
+ import AboutWindow from "./windows/AboutWindow";
+ import ExperienceWindow from "./windows/ExperienceWindow";
+@@ -39,6 +40,7 @@ const cascadeStep = 32;
+ let cascadeCount = 0;
+ 
+ const OS = () => {
++  const isMobile = useIsMobile();
+   const [showWelcome, setShowWelcome] = useState(false);
+   const [showBell, setShowBell] = useState(false);
+   const { windows, openWindow, closeWindow, focusWindow, minimizeWindow, moveWindow } =
+@@ -54,6 +56,8 @@ const OS = () => {
+ 
+   const launch = (id: string) => {
+     if (!windowMeta[id]) return;
++    // on mobile, apps are full-screen and swapped one at a time rather than
++    // stacked — jumping straight to an existing one just re-focuses it
+     cascadeCount = (cascadeCount + 1) % 6;
+     openWindow(id, {
+       x: cascadeBase.x + cascadeCount * cascadeStep,
+@@ -61,7 +65,24 @@ const OS = () => {
+     });
+   };
+ 
+-  const openIds = Object.keys(windows).filter((id) => !windows[id].minimized);
++  const openWindowList = Object.values(windows).filter((w) => !w.minimized);
++  const openIds = openWindowList.map((w) => w.id);
++
++  // on mobile only the top (most recently focused) window is actually
++  // rendered full-screen — the rest stay "open" in state so the dock's
++  // active-dot indicator and minimize/close behavior keep working
++  const topMobileWindow = isMobile
++    ? openWindowList.reduce<typeof openWindowList[number] | null>(
++        (top, w) => (!top || w.z > top.z ? w : top),
++        null
++      )
++    : null;
++
++  const visibleWindows = isMobile
++    ? topMobileWindow
++      ? [topMobileWindow]
++      : []
++    : openWindowList;
+ 
+   return (
+     <div className="relative h-screen w-screen overflow-hidden">
+@@ -82,8 +103,7 @@ const OS = () => {
+         />
+       )}
+ 
+-      {Object.values(windows).map((win) => {
+-        if (win.minimized) return null;
++      {visibleWindows.map((win) => {
+         const meta = windowMeta[win.id];
+         if (!meta) return null;
+         return (
+@@ -95,6 +115,7 @@ const OS = () => {
+             y={win.y}
+             z={win.z}
+             width={meta.width}
++            isMobile={isMobile}
+             onClose={() => closeWindow(win.id)}
+             onMinimize={() => minimizeWindow(win.id)}
+             onFocus={() => focusWindow(win.id)}
+@@ -111,7 +132,7 @@ const OS = () => {
+         );
+       })}
+ 
+-      <Dock openIds={openIds} onLaunch={launch} />
++      <Dock openIds={openIds} onLaunch={launch} isMobile={isMobile} />
+     </div>
+   );
+ };
+diff --git a/src/components/os/WindowFrame.tsx b/src/components/os/WindowFrame.tsx
+index 9cc0a07..a63d0bc 100644
+--- a/src/components/os/WindowFrame.tsx
++++ b/src/components/os/WindowFrame.tsx
+@@ -1,5 +1,4 @@
+ import { ReactNode, useCallback, useEffect, useRef, useState } from "react";
+-import { X, Minus } from "lucide-react";
+ 
+ interface WindowFrameProps {
+   title: string;
+@@ -8,6 +7,7 @@ interface WindowFrameProps {
+   y: number;
+   z: number;
+   width?: number;
++  isMobile?: boolean;
+   onClose: () => void;
+   onMinimize: () => void;
+   onFocus: () => void;
+@@ -22,6 +22,7 @@ const WindowFrame = ({
+   y,
+   z,
+   width = 480,
++  isMobile = false,
+   onClose,
+   onMinimize,
+   onFocus,
+@@ -36,12 +37,13 @@ const WindowFrame = ({
+ 
+   const handlePointerDown = useCallback(
+     (e: React.PointerEvent) => {
++      if (isMobile) return; // no dragging on mobile — windows are full screen
+       onFocus();
+       dragRef.current = { startX: e.clientX, startY: e.clientY, origX: x, origY: y };
+       setDragging(true);
+       (e.target as HTMLElement).setPointerCapture(e.pointerId);
+     },
+-    [x, y, onFocus]
++    [x, y, onFocus, isMobile]
+   );
+ 
+   useEffect(() => {
+@@ -67,14 +69,23 @@ const WindowFrame = ({
+     };
+   }, [dragging, onMove]);
+ 
++  const desktopStyle = { left: x, top: y, width, zIndex: z, maxHeight: "78vh" };
++  const mobileStyle = { top: 40, left: 0, right: 0, bottom: 76, zIndex: z };
++
+   return (
+     <div
+-      className="animate-window-in glass-panel absolute flex flex-col overflow-hidden rounded-xl shadow-2xl"
+-      style={{ left: x, top: y, width, zIndex: z, maxHeight: "78vh" }}
++      className={
++        isMobile
++          ? "animate-window-in glass-panel fixed flex flex-col overflow-hidden rounded-t-xl shadow-2xl"
++          : "animate-window-in glass-panel absolute flex flex-col overflow-hidden rounded-xl shadow-2xl"
++      }
++      style={isMobile ? mobileStyle : desktopStyle}
+       onMouseDown={onFocus}
+     >
+       <div
+-        className="no-select flex shrink-0 cursor-grab items-center gap-2 border-b border-white/5 px-4 py-3 active:cursor-grabbing"
++        className={`no-select flex shrink-0 items-center gap-2 border-b border-white/5 px-4 py-3 ${
++          isMobile ? "" : "cursor-grab active:cursor-grabbing"
++        }`}
+         onPointerDown={handlePointerDown}
+       >
+         <div className="flex items-center gap-2">
+@@ -83,23 +94,27 @@ const WindowFrame = ({
+               e.stopPropagation();
+               onClose();
+             }}
+-            className="traffic-dot bg-[#ff5f57] hover:opacity-25"
++            className="traffic-dot bg-[#ff5f57] hover:opacity-80"
+             aria-label="Close window"
+           />
+-          <button
+-            onClick={(e) => {
+-              e.stopPropagation();
+-              onMinimize();
+-            }}
+-            aria-label="Minimize window"
+-          />
++          {!isMobile && (
++            <button
++              onClick={(e) => {
++                e.stopPropagation();
++                onMinimize();
++              }}
++              className="traffic-dot bg-[#febc2e] hover:opacity-80"
++              aria-label="Minimize window"
++            />
++          )}
++          {!isMobile && <div className="traffic-dot bg-[#28c840] opacity-40" />}
+         </div>
+         <div className="ml-2 flex items-center gap-1.5 text-xs font-medium text-muted-foreground">
+           {icon}
+           {title}
+         </div>
+       </div>
+-      <div className="overflow-y-auto px-6 py-5">{children}</div>
++      <div className="flex-1 overflow-y-auto px-5 py-5 sm:px-6">{children}</div>
+     </div>
+   );
+ };

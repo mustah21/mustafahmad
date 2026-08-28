@@ -19,10 +19,36 @@ export const dockItems: DockItem[] = [
 const Dock = ({
   openIds,
   onLaunch,
+  isMobile = false,
 }: {
   openIds: string[];
   onLaunch: (id: string) => void;
+  isMobile?: boolean;
 }) => {
+  if (isMobile) {
+    // full-width bottom tab bar — no hover tooltips (they don't work on touch),
+    // bigger tap targets, always-visible labels instead
+    return (
+      <div className="no-select glass-panel fixed inset-x-0 bottom-0 z-40 flex items-stretch justify-around border-t border-white/5 px-1 pb-[env(safe-area-inset-bottom)]">
+        {dockItems.map((item) => {
+          const active = openIds.includes(item.id);
+          return (
+            <button
+              key={item.id}
+              onClick={() => onLaunch(item.id)}
+              className={`flex flex-1 flex-col items-center gap-0.5 py-2.5 text-[10px] transition-colors ${
+                active ? "text-primary" : "text-muted-foreground"
+              }`}
+            >
+              {item.icon}
+              <span className="leading-none">{item.label}</span>
+            </button>
+          );
+        })}
+      </div>
+    );
+  }
+
   return (
     <div className="no-select fixed bottom-4 left-1/2 z-40 -translate-x-1/2">
       <div className="glass-panel flex items-end gap-1.5 rounded-2xl px-3 py-2.5 shadow-2xl">
