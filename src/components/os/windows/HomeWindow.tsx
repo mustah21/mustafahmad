@@ -45,7 +45,7 @@ const HomeWindow = ({ onOpen }: { onOpen: (id: string) => void }) => {
           <Linkedin className="h-3.5 w-3.5" /> LinkedIn
         </a>
         <a
-          href="/Mustafa_Ahmad-Resume.pdf"
+          href="/Mustafa_Ahmad_Resume.pdf"
           download
           className="flex items-center gap-1.5 text-muted-foreground transition-colors hover:text-foreground"
         >
